@@ -9,12 +9,22 @@ well as its serialization semantics. The core `tinn` api is exposed under the
 `XTinn` class.
 
 The reference test case replicates written character recognition from the same
-dataset as `tinn`.
+data set as `tinn`.
+
+Binary artifacts are available on JCenter at the following coordinates:
+
+```xml
+<dependency>
+  <groupId>io.vacco.jtinn</groupId>
+  <artifactId>jtinn</artifactId>
+  <version>1.0</version>
+</dependency>
+```
 
 ## API extensions
 
 Whereas `tinn`'s api works as intended, I think it would be useful to extend
-the core api under a `JTinn` napespace to support customizations such as:
+the core api under a `JTinn` namespace to support customizations such as:
 
 - Multilayer support.
 - Extended activation function support.
