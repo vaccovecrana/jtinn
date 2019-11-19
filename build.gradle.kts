@@ -47,7 +47,7 @@ publishing {
           developer {
             id.set("jjzazuet")
             name.set("Jesus Zazueta")
-            email.set("jjzauet@vacco.io")
+            email.set("jjzazuet@vacco.io")
           }
         }
         scm {
