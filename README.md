@@ -1,0 +1,28 @@
+# JTinn
+
+`JTinn` is a Java port of [Tinn - The tiny neural network library](https://github.com/glouw/tinn).
+
+## Supported features
+
+`JTinn` aims to remain compatible with `tinn`'s API as much as possible, as
+well as its serialization semantics. The core `tinn` api is exposed under the
+`XTinn` class.
+
+The reference test case replicates written character recognition from the same
+dataset as `tinn`.
+
+## API extensions
+
+Whereas `tinn`'s api works as intended, I think it would be useful to extend
+the core api under a `JTinn` napespace to support customizations such as:
+
+- Multilayer support.
+- Extended activation function support.
+- Per layer activation function assignments.
+
+### Disclaimer
+
+> This project is not production ready, and still requires security and code
+> correctness audits. You use this software at your own risk.
+> Vaccove Crana, LLC., its affiliates and subsidiaries waive any and all
+> liability for any damages caused to you by your usage of this software.
