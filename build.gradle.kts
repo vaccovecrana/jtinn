@@ -62,7 +62,7 @@ publishing {
     maven {
       name = "bintray"
       val bintrayUser = System.getenv("BINTRAY_USER")
-      setUrl("https://api.bintray.com/maven/vaccovecrana/${project.group}/${project.name}")
+      setUrl("https://api.bintray.com/maven/vaccovecrana/vacco-oss/${project.name}")
       credentials {
         username = bintrayUser
         password = System.getenv("BINTRAY_KEY")
