@@ -114,7 +114,8 @@ public class XTinn {
     try (PrintWriter w = w0) {
       w.printf("%d %d %d%n", t.nips, t.nhid, t.nops);
       for (double bias : t.b) { w.printf("%f%n", bias); }
-      for (double weight : t.w) { w.printf("%f%n", weight); }
+      for (double hidWeight : t.w) { w.printf("%f%n", hidWeight); }
+      for (double outWeight : t.x) { w.printf("%f%n", outWeight); }
     }
   }
 
@@ -126,6 +127,7 @@ public class XTinn {
       Tinn t = xtbuild(tData[0], tData[1], tData[2]);
       for (int i = 0; i < t.nb; i++) { t.b[i] = Double.parseDouble(r.readLine()); }
       for (int i = 0; i < t.nw; i++) { t.w[i] = Double.parseDouble(r.readLine()); }
+      for (int i = 0; i < t.x.length; i++) { t.x[i] = Double.parseDouble(r.readLine()); }
       return t;
     }
   }

@@ -8,6 +8,11 @@
 well as its serialization semantics. The core `tinn` api is exposed under the
 `XTinn` class.
 
+During serialization/deserialization of saved data, `JTinn` will
+also save the hidden to output layer weights, in addition to the data saved by
+default by `tinn`, which should make a `JTinn` trained network loadable
+by `tinn`.
+
 The reference test case replicates written character recognition from the same
 data set as `tinn`.
 

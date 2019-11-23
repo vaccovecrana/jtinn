@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "io.vacco.jtinn"
-version = "1.0"
+version = "1.0.1"
 
 java {
   withJavadocJar()

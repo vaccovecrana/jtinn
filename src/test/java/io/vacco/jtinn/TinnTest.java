@@ -40,7 +40,7 @@ public class TinnTest {
             return sample;
           }).collect(Collectors.toList());
 
-          int nips = 255;
+          int nips = 256;
           int nops = 10;
 
           // Hyper Parameters.
@@ -72,7 +72,12 @@ public class TinnTest {
           // One data set is picked at random (zero index of input and target arrays is enough
           // as they were both shuffled earlier).
           DigitSample s0 = samples.get(0);
-          double[] predict = XTinn.xtpredict(tinn, s0.features);
+
+          File tinnF = new File("./build/digits.tinn");
+          XTinn.xtsave(tinn, new PrintWriter(new FileWriter(tinnF)));
+          Tinn lTinn = XTinn.xtload(new FileInputStream(tinnF));
+
+          double[] predict = XTinn.xtpredict(lTinn, s0.features);
 
           DecimalFormat df = new DecimalFormat("0.00");
           String[] tgtFmt = Arrays.stream(s0.labels).mapToObj(df::format).toArray(String[]::new);
