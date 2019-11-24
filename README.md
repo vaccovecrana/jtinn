@@ -22,7 +22,7 @@ Binary artifacts are available on JCenter at the following coordinates:
 <dependency>
   <groupId>io.vacco.jtinn</groupId>
   <artifactId>jtinn</artifactId>
-  <version>1.0</version>
+  <version>1.0.1</version>
 </dependency>
 ```
 
