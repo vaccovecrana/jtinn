@@ -1,7 +1,7 @@
 plugins { id("io.vacco.common-build") version "0.5.3" }
 
 group = "io.vacco.jtinn"
-version = "1.0.1"
+version = "2.0.0"
 
 configure<io.vacco.common.CbPluginProfileExtension> {
   addJ8Spec()

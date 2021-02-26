@@ -1,5 +1,13 @@
 package io.vacco.jtinn;
 
+import io.vacco.jtinn.activation.JtActivationFn;
+import io.vacco.jtinn.activation.JtGelu;
+import io.vacco.jtinn.activation.JtLeakyRelu;
+import io.vacco.jtinn.activation.JtSigmoid;
+import io.vacco.jtinn.error.JtErrorFn;
+import io.vacco.jtinn.error.JtMeanSquaredError;
+import io.vacco.jtinn.io.JtSerializer;
+import io.vacco.jtinn.io.JtTextSerializer;
 import j8spec.annotation.DefinedOrder;
 import j8spec.junit.J8SpecRunner;
 import org.junit.runner.RunWith;
@@ -20,14 +28,17 @@ class DigitSample {
 
 @DefinedOrder
 @RunWith(J8SpecRunner.class)
-public class TinnTest {
+public class TinnSpec {
 
   public static Tinn tinn;
 
   static {
     describe("JTinn", () -> {
       it("Can perform training on a reference data set", () -> {
+
         File f = new File("./src/test/resources/semeion.data");
+        JtErrorFn errorFn = new JtMeanSquaredError();
+        JtActivationFn activationFn = new JtSigmoid(); // new JtLeakyRelu(0.002); // new JtGelu();
 
         try (Stream<String> lines = Files.lines(f.toPath())) {
           // Load the training set.
@@ -60,7 +71,7 @@ public class TinnTest {
             double error = 0.0f;
             Collections.shuffle(samples);
             for (DigitSample ds : samples) {
-              error += XTinn.xttrain(tinn, ds.features, ds.labels, rate);
+              error += XTinn.xttrain(tinn, errorFn, activationFn, ds.features, ds.labels, rate);
             }
             System.out.printf("error %.12f :: learning rate %f\n", error / samples.size(), rate);
             rate *= anneal;
@@ -74,10 +85,11 @@ public class TinnTest {
           DigitSample s0 = samples.get(0);
 
           File tinnF = new File("./build/digits.tinn");
-          XTinn.xtsave(tinn, new PrintWriter(new FileWriter(tinnF)));
-          Tinn lTinn = XTinn.xtload(new FileInputStream(tinnF));
+          JtSerializer s = new JtTextSerializer(new PrintWriter(new FileWriter(tinnF)));
+          s.write(tinn);
+          Tinn lTinn = s.read(new FileInputStream(tinnF));
 
-          double[] predict = XTinn.xtpredict(lTinn, s0.features);
+          double[] predict = XTinn.xtpredict(lTinn, activationFn, s0.features);
 
           DecimalFormat df = new DecimalFormat("0.00");
           String[] tgtFmt = Arrays.stream(s0.labels).mapToObj(df::format).toArray(String[]::new);
@@ -92,8 +104,9 @@ public class TinnTest {
 
       it("Can serialize/deserialize a trained network", () -> {
         File tmp = File.createTempFile("tinn", "data");
-        XTinn.xtsave(tinn, new PrintWriter(new FileWriter(tmp)));
-        Tinn t0 = XTinn.xtload(new FileInputStream(tmp));
+        JtSerializer s = new JtTextSerializer(new PrintWriter(new FileWriter(tmp)));
+        s.write(tinn);
+        Tinn t0 = s.read(new FileInputStream(tmp));
         assertNotNull(t0);
       });
     });
