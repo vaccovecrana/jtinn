@@ -1,4 +1,7 @@
-.gradle
+.gradle/
+gradle/
+gradlew*
+
 .idea
 .DS_Store
 
