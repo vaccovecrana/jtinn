@@ -1,6 +1,6 @@
 package io.vacco.jtinn.activation;
 
 public interface JtActivationFn {
-  double apply(double x);
-  double pd(double x);
+  double apply(double z);
+  double pd(double z);
 }

@@ -8,11 +8,11 @@ public class JtLeakyRelu implements JtActivationFn {
     this.alpha = alpha;
   }
 
-  @Override public double apply(double x) {
-    return x > 0 ? x : alpha * x;
+  @Override public double apply(double z) {
+    return z > 0 ? z : alpha * z;
   }
 
-  @Override public double pd(double x) {
-    return x > 0 ? 1 : alpha;
+  @Override public double pd(double z) {
+    return z > 0 ? 1 : alpha;
   }
 }

@@ -6,8 +6,8 @@ public class JtMeanSquaredError implements JtErrorFn {
     return 0.5f * (a - b) * (a - b);
   }
 
-  @Override public double pd(double a, double b) {
-    return a - b;
+  @Override public double pd(double act, double target) {
+    return act - target;
   }
 
 }

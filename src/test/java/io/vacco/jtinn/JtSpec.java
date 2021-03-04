@@ -1,13 +1,9 @@
 package io.vacco.jtinn;
-
+/*
 import io.vacco.jtinn.activation.JtActivationFn;
-import io.vacco.jtinn.activation.JtGelu;
-import io.vacco.jtinn.activation.JtLeakyRelu;
 import io.vacco.jtinn.activation.JtSigmoid;
 import io.vacco.jtinn.error.JtErrorFn;
 import io.vacco.jtinn.error.JtMeanSquaredError;
-import io.vacco.jtinn.io.JtSerializer;
-import io.vacco.jtinn.io.JtTextSerializer;
 import j8spec.annotation.DefinedOrder;
 import j8spec.junit.J8SpecRunner;
 import org.junit.runner.RunWith;
@@ -28,7 +24,7 @@ class DigitSample {
 
 @DefinedOrder
 @RunWith(J8SpecRunner.class)
-public class TinnSpec {
+public class JtSpec {
 
   public static Tinn tinn;
 
@@ -112,3 +108,4 @@ public class TinnSpec {
     });
   }
 }
+*/
