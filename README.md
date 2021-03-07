@@ -1,39 +1,20 @@
 # JTinn
 
-`JTinn` is a Java port of [Tinn - The tiny neural network library](https://github.com/glouw/tinn).
+`JTinn` is a minimal neural network library.
+
+It is based on [Tinn - The tiny neural network library](https://github.com/glouw/tinn), but
+breaks api compatibility, since the upstream project seems to be no longer maintained.
 
 ## Supported features
 
-`JTinn` aims to remain compatible with `tinn`'s API as much as possible, as
-well as its serialization semantics. The core `tinn` api is exposed under the
-`XTinn` class.
-
-During serialization/deserialization of saved data, `JTinn` will
-also save the hidden to output layer weights, in addition to the data saved by
-default by `tinn`, which should make a `JTinn` trained network loadable
-by `tinn`.
-
-The reference test case replicates written character recognition from the same
+The reference test cases replicate written character recognition from the same
 data set as `tinn`.
 
-Binary artifacts are available on JCenter at the following coordinates:
+[![Download](https://api.bintray.com/packages/vaccovecrana/vacco-oss/jtinn/images/download.svg)](https://bintray.com/vaccovecrana/vacco-oss/jtinn/_latestVersion)
 
-```xml
-<dependency>
-  <groupId>io.vacco.jtinn</groupId>
-  <artifactId>jtinn</artifactId>
-  <version>1.0.1</version>
-</dependency>
-```
+Add the following dependency from JCenter to your project:
 
-## API extensions
-
-Whereas `tinn`'s api works as intended, I think it would be useful to extend
-the core api under a `JTinn` namespace to support customizations such as:
-
-- Multilayer support.
-- Extended activation function support.
-- Per layer activation function assignments.
+    implementation "io.vacco.jtinn:jtinn:<VERSION>"
 
 ### Disclaimer
 
