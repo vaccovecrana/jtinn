@@ -4,18 +4,24 @@ import io.vacco.jtinn.util.JtArrays;
 
 public class JtNetwork {
 
-  public final JtLayer[] layerSpec;
+  public JtLayer[] layerSpec;
+  public JtUpdater updater;
 
-  public JtNetwork(int inputSize, JtParamInitializer paramInitializer, JtLayer... layerSpec) {
+  public JtNetwork init(int inputSize, JtParamInitializer paramInitializer,
+                        JtUpdater updater, JtLayer... layerSpec) {
     this.layerSpec = layerSpec;
+    this.updater = updater;
     layerSpec[0] = layerSpec[0].withWeights(inputSize);
     paramInitializer.apply(layerSpec[0]);
+
     for (int k = 1; k < layerSpec.length; k++) {
       JtLayer lk = layerSpec[k];
       JtLayer lkm1 = layerSpec[k - 1];
       lk.withWeights(lkm1.size());
       paramInitializer.apply(lk);
     }
+
+    return this;
   }
 
   private void activate(double[] in, JtLayer l) {
@@ -27,7 +33,6 @@ public class JtNetwork {
         double wj = l.w[j][a];
         z = z + aj * wj;
       }
-      l.z[j] = z;
       l.a[j] = l.actFn.apply(z + l.b[j]);
     }
   }
@@ -43,7 +48,7 @@ public class JtNetwork {
   private void bp1(double[] target, JtOutputLayer l) {
     JtArrays.checkSize(target, l.a);
     for (int j = 0; j < l.size(); j++) {
-      l.δ[j] = l.errFn.pd(l.a[j], target[j]) * l.actFn.pd(l.z[j]);
+      l.δ[j] = l.errFn.pd(l.a[j], target[j]) * l.actFn.pd(l.a[j]);
     }
   }
 
@@ -52,30 +57,21 @@ public class JtNetwork {
     for (int j = 0; j < l.size(); j++) {
       d = 0;
       for (int k = 0; k < lp1.size(); k++) {
-        d = d + (lp1.w[k][j] * lp1.δ[k]);
+        d = d + (lp1.δ[k] * lp1.w[k][j]);
       }
-      l.δ[j] = d * l.actFn.pd(l.z[j]);
+      l.δ[j] = d;
     }
   }
 
-  private void gd(double rate, double[] lm1a, JtLayer l) { // TODO replace rate with an updater instance.
-    for (int j = 0; j < l.size(); j++) {
-      for (int w = 0; w < l.weightSize(); w++) {
-        l.w[j][w] = rate * l.w[j][w] - (l.δ[j] * lm1a[w]);
-      }
-      l.b[j] = rate * l.b[j] - l.δ[j];
-    }
-  }
-
-  public void backProp(double[] in, double[] tg, double rate) {
+  public void backProp(double[] in, double[] tg) {
     bp1(tg, getOutput());
     for (int l = layerSpec.length - 2; l >= 0; l--) {
       bp2(layerSpec[l], layerSpec[l + 1]);
     }
     for (int l = layerSpec.length - 1; l > 0; l--) {
-      gd(rate, layerSpec[l - 1].a, layerSpec[l]);
+      updater.apply(layerSpec[l - 1].a, layerSpec[l]);
     }
-    gd(rate, in, layerSpec[0]);
+    updater.apply(in, layerSpec[0]);
   }
 
   public double totalError(double[] out) {
@@ -88,9 +84,9 @@ public class JtNetwork {
     return dt;
   }
 
-  public double train(double[] in, double[] out, double rate) { // TODO may want to implement mini-batch training too.
+  public double train(double[] in, double[] out) {
     forward(in);
-    backProp(in, out, rate);
+    backProp(in, out);
     return totalError(out);
   }
 
@@ -100,4 +96,5 @@ public class JtNetwork {
   }
 
   public JtOutputLayer getOutput() { return (JtOutputLayer) layerSpec[layerSpec.length - 1]; }
+
 }

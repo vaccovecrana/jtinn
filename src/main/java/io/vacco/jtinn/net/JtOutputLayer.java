@@ -5,10 +5,11 @@ import io.vacco.jtinn.error.JtErrorFn;
 
 public class JtOutputLayer extends JtLayer {
 
-  public final JtErrorFn errFn;
+  public JtErrorFn errFn;
 
-  public JtOutputLayer(int size, JtActivationFn actFn, JtErrorFn errFn) {
-    super(size, actFn);
+  public JtOutputLayer init(int size, JtActivationFn actFn, JtErrorFn errFn) {
+    this.init(size, actFn);
     this.errFn = errFn;
+    return this;
   }
 }

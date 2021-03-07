@@ -4,12 +4,13 @@ import java.util.Random;
 
 public class JtRandomInitializer implements JtParamInitializer {
 
-  public final long seed;
-  private transient final Random r;
+  public long seed;
+  private transient Random r;
 
-  public JtRandomInitializer(long seed) {
+  public JtRandomInitializer init(long seed) {
     this.seed = seed;
     this.r = new Random(seed);
+    return this;
   }
 
   @Override public void apply(JtLayer layer) {
