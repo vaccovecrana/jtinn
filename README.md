@@ -10,8 +10,6 @@ breaks api compatibility, since the upstream project seems to be no longer maint
 The reference test cases replicate written character recognition from the same
 data set as `tinn`.
 
-[![Download](https://api.bintray.com/packages/vaccovecrana/vacco-oss/jtinn/images/download.svg)](https://bintray.com/vaccovecrana/vacco-oss/jtinn/_latestVersion)
-
 Add the following dependency from JCenter to your project:
 
     implementation "io.vacco.jtinn:jtinn:<VERSION>"
