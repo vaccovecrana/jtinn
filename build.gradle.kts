@@ -7,7 +7,7 @@ configure<io.vacco.oss.CbPluginProfileExtension> {
   addJ8Spec()
   addPmd()
   addClasspathHell()
-  sharedLibrary(true, true)
+  sharedLibrary(true, false)
 }
 
 configure<JavaPluginExtension> {
