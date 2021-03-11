@@ -11,7 +11,7 @@ jobs:
           repository: vaccovecrana/common-build
           token: ${{secrets.VACCO_CI_TOKEN}}
           path: .github/actions
-          ref: master
+          ref: 1.0.0
       - uses: ./.github/actions/cb-action
         with:
           ghEvent: ${{tojson(github.event)}}
