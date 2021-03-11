@@ -31,8 +31,10 @@ public class JtXorSpec {
           net,
           (network, epoch, error) -> {
             err[0] = error;
-            System.out.printf("Delta err: %s%n", asString14d(err));
-            return epoch == 8192;
+            if (epoch % 1000 == 0) {
+              System.out.printf("Epoch [%s] Delta err: [%s]%n", epoch, asString14d(err));
+            }
+            return epoch == 9000;
           },
           xor
       );

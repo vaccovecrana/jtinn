@@ -31,7 +31,9 @@ public class JtSemeionSpec {
       JtTrainer trainer = new JtTrainer(net,
           (network, epoch, error) -> {
             err[0] = error;
-            System.out.printf("Delta err: %s%n", asString14d(err));
+            if (epoch % 20 == 0) {
+              System.out.printf("Epoch [%s] Delta err: [%s]%n", epoch, asString14d(err));
+            }
             return epoch == 200;
           },
           digits
