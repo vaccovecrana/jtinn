@@ -1,0 +1,15 @@
+name: Gradle Build
+on: {push: {tags: null}}
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
+        with:
+          repository: vaccovecrana/common-build
+          token: ${{secrets.VACCO_CI_TOKEN}}
+          path: .github/actions
+          ref: feature/mvn-central
+      - uses: ./.github/actions/cb-action
