@@ -13,3 +13,10 @@ jobs:
           path: .github/actions
           ref: feature/mvn-central
       - uses: ./.github/actions/cb-action
+        with:
+          ghEvent: ${{tojson(github.event)}}
+          ghUser: ${{github.actor}}
+          ghToken: ${{secrets.VACCO_CI_TOKEN}}
+          sonatypeUser: ${{secrets.SONATYPE_USER}}
+          sonatypePassword: ${{secrets.SONATYPE_PASSWORD}}
+          mavenSigningPrv: ${{secrets.MAVEN_SIGNING_PRV}}
