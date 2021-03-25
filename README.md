@@ -10,7 +10,7 @@ breaks api compatibility, since the upstream project seems to be no longer maint
 The reference test cases replicate written character recognition from the same
 data set as `tinn`.
 
-Add the following dependency from JCenter to your project:
+Add the following dependency from Maven Central to your project:
 
     implementation "io.vacco.jtinn:jtinn:<VERSION>"
 
