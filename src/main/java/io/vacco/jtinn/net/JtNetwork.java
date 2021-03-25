@@ -24,8 +24,11 @@ public class JtNetwork {
     return this;
   }
 
-  private void activate(double[] in, JtLayer l) {
+  private void activate(double[] in, boolean update, JtLayer l) {
     double z;
+    double[] out = update ? l.a : l.ar;
+
+    if (!update) { System.arraycopy(l.a, 0, l.ar, 0, l.a.length); }
     for (int j = 0; j < l.size(); j++) {
       z = 0;
       for (int a = 0; a < l.weightSize(); a++) {
@@ -33,15 +36,14 @@ public class JtNetwork {
         double wj = l.w[j][a];
         z = z + aj * wj;
       }
-      l.a[j] = l.actFn.apply(z + l.b[j]);
+      out[j] = l.actFn.apply(z + l.b[j]);
     }
   }
 
-  // TODO feed forward may need an option to update (or not) the layer's output values.
-  public void forward(double[] in) {
-    activate(in, layerSpec[0]);
+  private void forward(double[] in, boolean update) {
+    activate(in, update, layerSpec[0]);
     for (int i = 1; i < layerSpec.length; i++) {
-      activate(layerSpec[i - 1].a, layerSpec[i]);
+      activate(update ? layerSpec[i - 1].a : layerSpec[i - 1].ar, update, layerSpec[i]);
     }
   }
 
@@ -63,7 +65,7 @@ public class JtNetwork {
     }
   }
 
-  public void backProp(double[] in, double[] tg) {
+  private void backProp(double[] in, double[] tg) {
     bp1(tg, getOutput());
     for (int l = layerSpec.length - 2; l >= 0; l--) {
       bp2(layerSpec[l], layerSpec[l + 1]);
@@ -85,14 +87,14 @@ public class JtNetwork {
   }
 
   public double train(double[] in, double[] out) {
-    forward(in);
+    forward(in, true);
     backProp(in, out);
     return totalError(out);
   }
 
   public double[] estimate(double[] in) {
-    forward(in);
-    return getOutput().a;
+    forward(in, false);
+    return getOutput().ar;
   }
 
   public JtOutputLayer getOutput() { return (JtOutputLayer) layerSpec[layerSpec.length - 1]; }

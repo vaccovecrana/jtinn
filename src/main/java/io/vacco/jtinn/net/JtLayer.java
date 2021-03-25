@@ -4,8 +4,11 @@ import io.vacco.jtinn.activation.JtActivationFn;
 
 public class JtLayer {
 
-  /** Layer activations, biases, and error derivatives */
-  public double[] a, b, δ;
+  /**
+   * Layer activations (plus buffer copy for non-updating estimation),
+   * biases, and error derivatives.
+   */
+  public double[] a, ar, b, δ;
 
   /** Weights from input layer, if any */
   public double[][] w;
@@ -13,6 +16,7 @@ public class JtLayer {
   public JtActivationFn actFn;
 
   public JtLayer init(int size, JtActivationFn actFn) {
+    this.ar = new double[size];
     this.a = new double[size];
     this.b = new double[size];
     this.δ = new double[size];
