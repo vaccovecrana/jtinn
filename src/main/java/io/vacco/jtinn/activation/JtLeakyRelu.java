@@ -1,6 +1,10 @@
 package io.vacco.jtinn.activation;
 
+import io.vacco.jtinn.net.JtSchema;
+
 public class JtLeakyRelu implements JtActivationFn {
+
+  private static final long serialVersionUID = JtSchema.version;
 
   public double α;
 

@@ -1,7 +1,7 @@
-plugins { id("io.vacco.oss.gitflow") version "0.9.7" }
+plugins { id("io.vacco.oss.gitflow") version "0.9.8" }
 
 group = "io.vacco.jtinn"
-version = "3.0.0"
+version = "3.0.1"
 
 configure<io.vacco.oss.gitflow.GsPluginProfileExtension> {
   addJ8Spec()
