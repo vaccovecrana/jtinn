@@ -2,6 +2,8 @@ package io.vacco.jtinn.net;
 
 public class JtSgdUpdater implements JtUpdater {
 
+  private static final long serialVersionUID = JtSchema.version;
+
   public double learningRate, annealingRate;
 
   public JtSgdUpdater init(double learningRate, double annealingRate) {
@@ -23,4 +25,5 @@ public class JtSgdUpdater implements JtUpdater {
   @Override public void onEpochEnd(int epoch) {
     this.learningRate = learningRate * annealingRate;
   }
+
 }

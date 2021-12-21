@@ -1,11 +1,10 @@
-plugins { id("io.vacco.oss") version "1.0.0" }
+plugins { id("io.vacco.oss.gitflow") version "0.9.7" }
 
 group = "io.vacco.jtinn"
-version = "2.0.1"
+version = "3.0.0"
 
-configure<io.vacco.oss.CbPluginProfileExtension> {
+configure<io.vacco.oss.gitflow.GsPluginProfileExtension> {
   addJ8Spec()
-  addPmd()
   addClasspathHell()
   sharedLibrary(true, false)
 }

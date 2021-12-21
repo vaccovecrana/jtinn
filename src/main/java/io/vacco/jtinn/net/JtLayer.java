@@ -2,7 +2,11 @@ package io.vacco.jtinn.net;
 
 import io.vacco.jtinn.activation.JtActivationFn;
 
-public class JtLayer {
+import java.io.Serializable;
+
+public class JtLayer implements Serializable {
+
+  private static final long serialVersionUID = JtSchema.version;
 
   /**
    * Layer activations (plus buffer copy for non-updating estimation),

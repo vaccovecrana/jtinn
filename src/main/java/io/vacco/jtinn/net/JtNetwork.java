@@ -2,7 +2,11 @@ package io.vacco.jtinn.net;
 
 import io.vacco.jtinn.util.JtArrays;
 
-public class JtNetwork {
+import java.io.Serializable;
+
+public class JtNetwork implements Serializable {
+
+  private static final long serialVersionUID = JtSchema.version;
 
   public JtLayer[] layerSpec;
   public JtUpdater updater;
