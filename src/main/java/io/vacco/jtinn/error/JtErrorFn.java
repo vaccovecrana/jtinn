@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public interface JtErrorFn extends Serializable {
 
-  double of(double a, double b);
-  double pd(double act, double target);
+  float of(float a, float b);
+  float pd(float act, float target);
 
 }

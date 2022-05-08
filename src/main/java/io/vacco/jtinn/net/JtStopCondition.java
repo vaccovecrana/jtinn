@@ -1,5 +1,5 @@
 package io.vacco.jtinn.net;
 
 public interface JtStopCondition {
-  boolean evaluate(JtNetwork network, int epoch, double error);
+  boolean evaluate(JtNetwork network, int epoch, float error);
 }

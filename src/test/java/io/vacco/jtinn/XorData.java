@@ -10,9 +10,9 @@ import java.util.List;
 
 class XorData implements JtPredictionSampleSupplier {
 
-  private static JtPredictionSample of(double in0, double in1, double out) {
-    double[] ft = new double[]{in0, in1};
-    double[] lb = new double[]{out};
+  private static JtPredictionSample of(float in0, float in1, float out) {
+    float[] ft = new float[]{in0, in1};
+    float[] lb = new float[]{out};
     return JtPredictionSample.of(ft, lb);
   }
 

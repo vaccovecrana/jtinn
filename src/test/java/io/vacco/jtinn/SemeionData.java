@@ -20,13 +20,18 @@ public class SemeionData implements JtPredictionSampleSupplier {
   static {
     try {
       try (Stream<String> lines = Files.lines(f.toPath())) {
+
+
         samples.addAll(
             lines.map(
-                row -> Arrays.stream(
-                    row.split(" "))
-                    .map(Double::parseDouble)
-                    .mapToDouble(Double::doubleValue)
-                    .toArray()
+                row -> {
+                  String[] sa = row.split(" ");
+                  float[] fa = new float[sa.length];
+                  for (int i = 0; i < sa.length; i++) {
+                    fa[i] = Float.parseFloat(sa[i]);
+                  }
+                  return fa;
+                }
             ).map(dArr -> JtPredictionSample.of(
                 Arrays.copyOfRange(dArr, 0, 256),
                 Arrays.copyOfRange(dArr, 256, 266)

@@ -16,11 +16,11 @@ import static j8spec.J8Spec.*;
 @RunWith(J8SpecRunner.class)
 public class JtSemeionSpec {
 
-  public static final JtActivationFn reluFn = new JtLeakyRelu().withAlpha(0.04);
-  public static final JtUpdater reluUpd = new JtSgdUpdater().init(0.025, 0.99);
+  public static final JtActivationFn reluFn = new JtLeakyRelu().withAlpha(0.04f);
+  public static final JtUpdater reluUpd = new JtSgdUpdater().init(0.025f, 0.99f);
 
   public static final JtActivationFn sigmoidFn = new JtSigmoid();
-  public static final JtUpdater sigmoidUpd = new JtSgdUpdater().init(1.0, 0.99);
+  public static final JtUpdater sigmoidUpd = new JtSgdUpdater().init(1.0f, 0.99f);
 
   public static final String sigmoid = "sigmoid.ser", leakyRelu = "leaky-relu.ser";
 
@@ -39,7 +39,7 @@ public class JtSemeionSpec {
 
     writeNet(net, new FileOutputStream(netFile));
 
-    double[] err = new double[1];
+    float[] err = new float[1];
     JtPredictionSampleSupplier digits = new SemeionData();
     JtTrainer trainer = new JtTrainer(net,
         (network, epoch, error) -> {
@@ -57,7 +57,7 @@ public class JtSemeionSpec {
 
     JtNetwork net0 = readNet(new FileInputStream(netFile));
     JtPredictionSample sample = digits.get()[0];
-    double[] guess = net0.estimate(sample.features);
+    float[] guess = net0.estimate(sample.features);
 
     System.out.printf("Sample: %s%n", asString2d(sample.features));
     System.out.printf("Guess:  %s%n", asString2d(guess));

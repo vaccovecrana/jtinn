@@ -12,24 +12,24 @@ public class JtLayer implements Serializable {
    * Layer activations (plus buffer copy for non-updating estimation),
    * biases, and error derivatives.
    */
-  public double[] a, ar, b, δ;
+  public float[] a, ar, b, δ;
 
   /** Weights from input layer, if any */
-  public double[][] w;
+  public float[][] w;
 
   public JtActivationFn actFn;
 
   public JtLayer init(int size, JtActivationFn actFn) {
-    this.ar = new double[size];
-    this.a = new double[size];
-    this.b = new double[size];
-    this.δ = new double[size];
+    this.ar = new float[size];
+    this.a = new float[size];
+    this.b = new float[size];
+    this.δ = new float[size];
     this.actFn = actFn;
     return this;
   }
 
   public JtLayer withWeights(int weights) {
-    this.w = new double[size()][weights];
+    this.w = new float[size()][weights];
     return this;
   }
 

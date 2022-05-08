@@ -15,7 +15,7 @@ public class JtTrainer {
 
   public void start() {
     int epoch = 0;
-    double batchError = -1;
+    float batchError = -1;
     while (!stopFn.evaluate(network, epoch, batchError)) {
       epoch++;
       batchError = 0;

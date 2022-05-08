@@ -6,17 +6,17 @@ public class JtLeakyRelu implements JtActivationFn {
 
   private static final long serialVersionUID = JtSchema.version;
 
-  public double α;
+  public float α;
 
-  @Override public double apply(double z) {
+  @Override public float apply(float z) {
     return z > 0 ? z : α * z;
   }
 
-  @Override public double pd(double z) {
+  @Override public float pd(float z) {
     return z > 0 ? 1 : α;
   }
 
-  public JtLeakyRelu withAlpha(double α) {
+  public JtLeakyRelu withAlpha(float α) {
     this.α = α;
     return this;
   }

@@ -25,7 +25,7 @@ public class JtXorSpec {
           new JtLayer().init(4, fn),
           new JtOutputLayer().init(1, fn, eFn)
       );
-      double[] err = new double[1];
+      float[] err = new float[1];
       XorData xor = new XorData();
       JtTrainer trainer = new JtTrainer(
           net,
@@ -41,7 +41,7 @@ public class JtXorSpec {
 
       trainer.start();
       for (JtPredictionSample smp : xor.get()) {
-        double[] guess = net.estimate(smp.features);
+        float[] guess = net.estimate(smp.features);
         System.out.printf("Sample: %s => %s%n", asString14d(smp.features), asString14d(guess));
       }
     });

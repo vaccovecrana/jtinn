@@ -15,12 +15,12 @@ public class JtRandomInitializer implements JtParamInitializer {
 
   @Override public void apply(JtLayer layer) {
     for (int i = 0; i < layer.b.length; i++) {
-      layer.b[i] = r.nextDouble() - 0.5;
+      layer.b[i] = (float) (r.nextFloat() - 0.5);
     }
     if (layer.w != null) {
       for (int k = 0; k < layer.w.length; k++) {
         for (int j = 0; j < layer.w[k].length; j++) {
-          layer.w[k][j] = r.nextDouble() - 0.5;
+          layer.w[k][j] = (float) (r.nextFloat() - 0.5);
         }
       }
     }

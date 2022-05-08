@@ -4,7 +4,7 @@ import static java.lang.String.format;
 
 public class JtArrays {
 
-  public static void checkSize(double[] in0, double[] in1) {
+  public static void checkSize(float[] in0, float[] in1) {
     if (in0 == null || in1 == null) {
       throw new IllegalArgumentException(
           format("Invalid array inputs: [%s], [%s]",
