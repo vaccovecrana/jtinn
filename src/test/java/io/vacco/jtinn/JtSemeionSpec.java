@@ -2,7 +2,10 @@ package io.vacco.jtinn;
 
 import io.vacco.jtinn.activation.*;
 import io.vacco.jtinn.error.*;
+import io.vacco.jtinn.layer.JtLayer;
+import io.vacco.jtinn.layer.JtOutputLayer;
 import io.vacco.jtinn.net.*;
+import io.vacco.jtinn.train.*;
 import j8spec.annotation.DefinedOrder;
 import j8spec.junit.J8SpecRunner;
 import org.junit.runner.RunWith;

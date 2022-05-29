@@ -1,6 +1,7 @@
-package io.vacco.jtinn.net;
+package io.vacco.jtinn.layer;
 
 import io.vacco.jtinn.activation.JtActivationFn;
+import io.vacco.jtinn.net.JtSchema;
 
 import java.io.Serializable;
 

@@ -1,7 +1,8 @@
-package io.vacco.jtinn.net;
+package io.vacco.jtinn.layer;
 
 import io.vacco.jtinn.activation.JtActivationFn;
 import io.vacco.jtinn.error.JtErrorFn;
+import io.vacco.jtinn.net.JtSchema;
 
 public class JtOutputLayer extends JtLayer {
 
@@ -14,4 +15,5 @@ public class JtOutputLayer extends JtLayer {
     this.errFn = errFn;
     return this;
   }
+
 }

@@ -1,4 +1,7 @@
-package io.vacco.jtinn.net;
+package io.vacco.jtinn.train;
+
+import io.vacco.jtinn.net.JtNetwork;
+import io.vacco.jtinn.net.JtPredictionSample;
 
 public class JtTrainer {
 

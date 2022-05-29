@@ -1,4 +1,8 @@
-package io.vacco.jtinn.net;
+package io.vacco.jtinn.train;
+
+import io.vacco.jtinn.layer.JtLayer;
+import io.vacco.jtinn.layer.JtOutputLayer;
+import io.vacco.jtinn.net.JtSchema;
 
 public class JtSgdUpdater implements JtUpdater {
 

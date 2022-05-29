@@ -1,5 +1,9 @@
 package io.vacco.jtinn.net;
 
+import io.vacco.jtinn.layer.JtLayer;
+import io.vacco.jtinn.layer.JtOutputLayer;
+import io.vacco.jtinn.train.JtParamInitializer;
+import io.vacco.jtinn.train.JtUpdater;
 import io.vacco.jtinn.util.JtArrays;
 
 import java.io.Serializable;
@@ -12,7 +16,7 @@ public class JtNetwork implements Serializable {
   public JtUpdater updater;
 
   public JtNetwork init(int inputSize, JtParamInitializer paramInitializer,
-                        JtUpdater updater, JtLayer... layerSpec) {
+                        JtUpdater updater, JtLayer ... layerSpec) {
     this.layerSpec = layerSpec;
     this.updater = updater;
     layerSpec[0] = layerSpec[0].withWeights(inputSize);

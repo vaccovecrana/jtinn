@@ -1,7 +1,7 @@
 package io.vacco.jtinn;
 
 import io.vacco.jtinn.net.JtPredictionSample;
-import io.vacco.jtinn.net.JtPredictionSampleSupplier;
+import io.vacco.jtinn.train.JtPredictionSampleSupplier;
 
 import java.io.File;
 import java.nio.file.Files;

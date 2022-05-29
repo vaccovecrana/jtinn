@@ -1,4 +1,6 @@
-package io.vacco.jtinn.net;
+package io.vacco.jtinn.train;
+
+import io.vacco.jtinn.layer.JtLayer;
 
 import java.io.Serializable;
 
