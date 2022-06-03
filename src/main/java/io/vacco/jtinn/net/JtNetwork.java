@@ -4,7 +4,7 @@ import io.vacco.jtinn.layer.JtLayer;
 import io.vacco.jtinn.layer.JtOutputLayer;
 import io.vacco.jtinn.train.JtParamInitializer;
 import io.vacco.jtinn.train.JtUpdater;
-import io.vacco.jtinn.util.JtArrays;
+import io.vacco.jtinn.util.JtSeq;
 
 import java.io.Serializable;
 
@@ -56,7 +56,7 @@ public class JtNetwork implements Serializable {
   }
 
   private void bp1(float[] target, JtOutputLayer l) {
-    JtArrays.checkSize(target, l.a);
+    JtSeq.checkSize(target, l.a);
     for (int j = 0; j < l.size(); j++) {
       l.δ[j] = l.errFn.pd(l.a[j], target[j]) * l.actFn.pd(l.a[j]);
     }
@@ -86,7 +86,7 @@ public class JtNetwork implements Serializable {
 
   public float totalError(float[] out) {
     JtOutputLayer ol = getOutput();
-    JtArrays.checkSize(out, ol.a);
+    JtSeq.checkSize(out, ol.a);
     float dt = 0;
     for (int j = 0; j < out.length; j++) {
       dt = dt + ol.errFn.of(ol.a[j], out[j]);

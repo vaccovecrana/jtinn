@@ -2,7 +2,7 @@ package io.vacco.jtinn.util;
 
 import static java.lang.String.format;
 
-public class JtArrays {
+public class JtSeq {
 
   public static void checkSize(float[] in0, float[] in1) {
     if (in0 == null || in1 == null) {
