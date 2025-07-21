@@ -3,11 +3,10 @@ package io.vacco.jtinn;
 import java.io.Serializable;
 
 public class JtUpdate {
-  public static interface JtUpdater extends Serializable {
 
+  public interface JtUpdater extends Serializable {
     void apply(double[] lm1a, JtLayers.JtLayer l);
     void onEpochEnd(int epoch);
-
   }
 
   public static class JtSgdUpdater implements JtUpdater {
@@ -35,6 +34,6 @@ public class JtUpdate {
     @Override public void onEpochEnd(int epoch) {
       this.learningRate = learningRate * annealingRate;
     }
-
   }
+
 }
