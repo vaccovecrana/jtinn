@@ -16,7 +16,7 @@ import static j8spec.J8Spec.*;
 @RunWith(J8SpecRunner.class)
 public class JtSemeionSpec {
 
-  public static final JtActivationFn reluFn = new JtLeakyRelu().withAlpha(0.04);
+  public static final JtActivationFn reluFn = new JtLeakyRelu().withAlpha(0.08);
   public static final JtUpdater reluUpd = new JtSgdUpdater().init(0.025, 0.99);
 
   public static final JtActivationFn sigmoidFn = new JtSigmoid();
@@ -26,8 +26,8 @@ public class JtSemeionSpec {
 
   private static void eval(JtActivationFn actFn, JtUpdater updFn, String netName) throws Exception {
     System.out.printf("%n================ %s ================%n", actFn.getClass().getCanonicalName());
-    JtErrorFn errFn = new JtMeanSquaredError();
-    JtNetwork net = new JtNetwork().init(
+    var errFn = new JtMeanSquaredError();
+    var net = new JtNetwork().init(
         256,
         new JtRandomInitializer().init(1234),
         updFn,
@@ -35,13 +35,13 @@ public class JtSemeionSpec {
         new JtOutputLayer().init(10, actFn, errFn)
     );
 
-    File netFile = new File("./build", netName);
+    var netFile = new File("./build", netName);
 
     writeNet(net, new FileOutputStream(netFile));
 
-    double[] err = new double[1];
-    JtPredictionSampleSupplier digits = new SemeionData();
-    JtTrainer trainer = new JtTrainer(net,
+    var err = new double[1];
+    var digits = new SemeionData();
+    var trainer = new JtTrainer(net,
         (network, epoch, error) -> {
           err[0] = error;
           if (epoch % 20 == 0) {
@@ -55,9 +55,9 @@ public class JtSemeionSpec {
     trainer.start();
     writeNet(net, new FileOutputStream(netFile));
 
-    JtNetwork net0 = readNet(new FileInputStream(netFile));
-    JtPredictionSample sample = digits.get()[0];
-    double[] guess = net0.estimate(sample.features);
+    var net0 = readNet(new FileInputStream(netFile));
+    var sample = digits.get()[0];
+    var guess = net0.estimate(sample.features);
 
     System.out.printf("Sample: %s%n", asString2d(sample.features));
     System.out.printf("Guess:  %s%n", asString2d(guess));

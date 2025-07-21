@@ -1,16 +1,10 @@
 package io.vacco.jtinn;
 
-import io.vacco.jtinn.net.JtPredictionSample;
-import io.vacco.jtinn.net.JtPredictionSampleSupplier;
-
+import io.vacco.jtinn.net.*;
 import java.io.File;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class SemeionData implements JtPredictionSampleSupplier {
 
@@ -19,7 +13,7 @@ public class SemeionData implements JtPredictionSampleSupplier {
 
   static {
     try {
-      try (Stream<String> lines = Files.lines(f.toPath())) {
+      try (var lines = Files.lines(f.toPath())) {
         samples.addAll(
             lines.map(
                 row -> Arrays.stream(

@@ -1,8 +1,6 @@
 package io.vacco.jtinn;
 
-import io.vacco.jtinn.activation.JtActivationFn;
 import io.vacco.jtinn.activation.JtSigmoid;
-import io.vacco.jtinn.error.JtErrorFn;
 import io.vacco.jtinn.error.JtMeanSquaredError;
 import io.vacco.jtinn.net.*;
 import j8spec.annotation.DefinedOrder;
@@ -17,17 +15,17 @@ import static io.vacco.jtinn.JtSpecUtil.asString14d;
 public class JtXorSpec {
   static {
     it("Can train a network to learn the XOR function", () -> {
-      JtActivationFn fn = new JtSigmoid();
-      JtErrorFn eFn = new JtMeanSquaredError();
-      JtNetwork net = new JtNetwork().init(2,
+      var fn = new JtSigmoid();
+      var eFn = new JtMeanSquaredError();
+      var net = new JtNetwork().init(2,
           new JtRandomInitializer().init(1234),
           new JtSgdUpdater().init(1, 1),
           new JtLayer().init(4, fn),
           new JtOutputLayer().init(1, fn, eFn)
       );
-      double[] err = new double[1];
-      XorData xor = new XorData();
-      JtTrainer trainer = new JtTrainer(
+      var err = new double[1];
+      var xor = new XorData();
+      var trainer = new JtTrainer(
           net,
           (network, epoch, error) -> {
             err[0] = error;
@@ -40,8 +38,8 @@ public class JtXorSpec {
       );
 
       trainer.start();
-      for (JtPredictionSample smp : xor.get()) {
-        double[] guess = net.estimate(smp.features);
+      for (var smp : xor.get()) {
+        var guess = net.estimate(smp.features);
         System.out.printf("Sample: %s => %s%n", asString14d(smp.features), asString14d(guess));
       }
     });

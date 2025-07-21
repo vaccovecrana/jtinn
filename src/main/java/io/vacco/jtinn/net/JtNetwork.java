@@ -19,8 +19,8 @@ public class JtNetwork implements Serializable {
     paramInitializer.apply(layerSpec[0]);
 
     for (int k = 1; k < layerSpec.length; k++) {
-      JtLayer lk = layerSpec[k];
-      JtLayer lkm1 = layerSpec[k - 1];
+      var lk = layerSpec[k];
+      var lkm1 = layerSpec[k - 1];
       lk.withWeights(lkm1.size());
       paramInitializer.apply(lk);
     }
@@ -81,7 +81,7 @@ public class JtNetwork implements Serializable {
   }
 
   public double totalError(double[] out) {
-    JtOutputLayer ol = getOutput();
+    var ol = getOutput();
     JtArrays.checkSize(out, ol.a);
     double dt = 0;
     for (int j = 0; j < out.length; j++) {

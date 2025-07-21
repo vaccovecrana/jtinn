@@ -1,18 +1,13 @@
 package io.vacco.jtinn;
 
-import io.vacco.jtinn.net.JtPredictionSample;
-import io.vacco.jtinn.net.JtPredictionSampleSupplier;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import io.vacco.jtinn.net.*;
+import java.util.*;
 
 class XorData implements JtPredictionSampleSupplier {
 
   private static JtPredictionSample of(double in0, double in1, double out) {
-    double[] ft = new double[]{in0, in1};
-    double[] lb = new double[]{out};
+    var ft = new double[] { in0, in1 };
+    var lb = new double[] { out };
     return JtPredictionSample.of(ft, lb);
   }
 
@@ -32,4 +27,5 @@ class XorData implements JtPredictionSampleSupplier {
     Collections.shuffle(trainingList);
     return trainingList.toArray(buffer);
   }
+
 }

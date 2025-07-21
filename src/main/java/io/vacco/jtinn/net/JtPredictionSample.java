@@ -6,7 +6,7 @@ public class JtPredictionSample {
   public double[] labels;
 
   public static JtPredictionSample of(double[] features, double[] labels) {
-    JtPredictionSample sample = new JtPredictionSample();
+    var sample = new JtPredictionSample();
     sample.features = features;
     sample.labels = labels;
     return sample;

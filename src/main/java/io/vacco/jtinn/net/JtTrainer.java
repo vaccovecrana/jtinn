@@ -19,8 +19,8 @@ public class JtTrainer {
     while (!stopFn.evaluate(network, epoch, batchError)) {
       epoch++;
       batchError = 0;
-      JtPredictionSample[] samples = miniBatchSupplier.get();
-      for (JtPredictionSample sample : samples) {
+      var samples = miniBatchSupplier.get();
+      for (var sample : samples) {
         batchError += network.train(sample.features, sample.labels);
       }
       batchError /= samples.length;
