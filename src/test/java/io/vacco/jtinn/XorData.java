@@ -2,7 +2,7 @@ package io.vacco.jtinn;
 
 import java.util.*;
 
-class XorData implements JtTrain.JtSampleSupplier {
+class XorData implements JtTrain.JtSampler {
 
   private static JtTrain.JtSample of(double in0, double in1, double out) {
     var ft = new double[] { in0, in1 };

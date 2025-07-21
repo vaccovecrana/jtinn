@@ -17,7 +17,7 @@ public class JtTrain {
     }
   }
 
-  public interface JtSampleSupplier extends Supplier<JtSample[]> { }
+  public interface JtSampler extends Supplier<JtSample[]> { }
 
   public interface JtStopCondition {
     boolean evaluate(JtNetwork network, int epoch, double error);
@@ -27,10 +27,10 @@ public class JtTrain {
 
     private final JtNetwork network;
     private final JtStopCondition stopFn;
-    private final JtSampleSupplier miniBatchSupplier;
+    private final JtSampler miniBatchSupplier;
 
     public JtTrainer(JtNetwork network, JtStopCondition stopFn,
-                     JtSampleSupplier miniBatchSupplier) {
+                     JtSampler miniBatchSupplier) {
       this.network = network;
       this.stopFn = stopFn;
       this.miniBatchSupplier = miniBatchSupplier;
