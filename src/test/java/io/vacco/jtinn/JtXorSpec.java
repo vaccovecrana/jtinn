@@ -1,8 +1,5 @@
 package io.vacco.jtinn;
 
-import io.vacco.jtinn.activation.JtSigmoid;
-import io.vacco.jtinn.error.JtMeanSquaredError;
-import io.vacco.jtinn.net.*;
 import j8spec.annotation.DefinedOrder;
 import j8spec.junit.J8SpecRunner;
 import org.junit.runner.RunWith;
@@ -15,22 +12,22 @@ import static io.vacco.jtinn.JtSpecUtil.asString14d;
 public class JtXorSpec {
   static {
     it("Can train a network to learn the XOR function", () -> {
-      var fn = new JtSigmoid();
-      var eFn = new JtMeanSquaredError();
+      var fn = new JtActivation.JtSigmoid();
+      var eFn = new JtError.JtMeanSquaredError();
       var net = new JtNetwork().init(2,
-          new JtRandomInitializer().init(1234),
-          new JtSgdUpdater().init(1, 1),
-          new JtLayer().init(4, fn),
-          new JtOutputLayer().init(1, fn, eFn)
+          new JtInit.JtRandomInitializer().init(1234),
+          new JtUpdate.JtSgdUpdater().init(1, 1),
+          new JtLayers.JtLayer().init(4, fn),
+          new JtLayers.JtOutputLayer().init(1, fn, eFn)
       );
       var err = new double[1];
       var xor = new XorData();
-      var trainer = new JtTrainer(
+      var trainer = new JtTrain.JtTrainer(
           net,
           (network, epoch, error) -> {
             err[0] = error;
             if (epoch % 1000 == 0) {
-              System.out.printf("Epoch [%s] Delta err: [%s]%n", epoch, asString14d(err));
+              System.out.printf("Epoch [%s] Delta err: %s%n", epoch, asString14d(err));
             }
             return epoch == 9000;
           },

@@ -1,18 +1,16 @@
-package io.vacco.jtinn.net;
-
-import io.vacco.jtinn.util.JtArrays;
+package io.vacco.jtinn;
 
 import java.io.Serializable;
 
 public class JtNetwork implements Serializable {
 
-  private static final long serialVersionUID = JtSchema.version;
+  private static final long serialVersionUID = JtUtil.version;
 
-  public JtLayer[] layerSpec;
-  public JtUpdater updater;
+  public JtLayers.JtLayer[] layerSpec;
+  public JtUpdate.JtUpdater updater;
 
-  public JtNetwork init(int inputSize, JtParamInitializer paramInitializer,
-                        JtUpdater updater, JtLayer... layerSpec) {
+  public JtNetwork init(int inputSize, JtInit.JtParamInitializer paramInitializer,
+                        JtUpdate.JtUpdater updater, JtLayers.JtLayer... layerSpec) {
     this.layerSpec = layerSpec;
     this.updater = updater;
     layerSpec[0] = layerSpec[0].withWeights(inputSize);
@@ -28,7 +26,7 @@ public class JtNetwork implements Serializable {
     return this;
   }
 
-  private void activate(double[] in, boolean update, JtLayer l) {
+  private void activate(double[] in, boolean update, JtLayers.JtLayer l) {
     double z;
     double[] out = update ? l.a : l.ar;
 
@@ -51,14 +49,14 @@ public class JtNetwork implements Serializable {
     }
   }
 
-  private void bp1(double[] target, JtOutputLayer l) {
-    JtArrays.checkSize(target, l.a);
+  private void bp1(double[] target, JtLayers.JtOutputLayer l) {
+    JtUtil.checkSize(target, l.a);
     for (int j = 0; j < l.size(); j++) {
       l.δ[j] = l.errFn.pd(l.a[j], target[j]) * l.actFn.pd(l.a[j]);
     }
   }
 
-  private void bp2(JtLayer l, JtLayer lp1) {
+  private void bp2(JtLayers.JtLayer l, JtLayers.JtLayer lp1) {
     double d;
     for (int j = 0; j < l.size(); j++) {
       d = 0;
@@ -82,7 +80,7 @@ public class JtNetwork implements Serializable {
 
   public double totalError(double[] out) {
     var ol = getOutput();
-    JtArrays.checkSize(out, ol.a);
+    JtUtil.checkSize(out, ol.a);
     double dt = 0;
     for (int j = 0; j < out.length; j++) {
       dt = dt + ol.errFn.of(ol.a[j], out[j]);
@@ -101,6 +99,8 @@ public class JtNetwork implements Serializable {
     return getOutput().ar;
   }
 
-  public JtOutputLayer getOutput() { return (JtOutputLayer) layerSpec[layerSpec.length - 1]; }
+  public JtLayers.JtOutputLayer getOutput() {
+    return (JtLayers.JtOutputLayer) layerSpec[layerSpec.length - 1];
+  }
 
 }

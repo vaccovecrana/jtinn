@@ -1,15 +1,14 @@
 package io.vacco.jtinn;
 
-import io.vacco.jtinn.net.*;
 import java.io.File;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class SemeionData implements JtPredictionSampleSupplier {
+public class SemeionData implements JtTrain.JtSampleSupplier {
 
   private static final File f = new File("./src/test/resources/semeion.data");
-  private static final List<JtPredictionSample> samples = new ArrayList<>();
+  private static final List<JtTrain.JtSample> samples = new ArrayList<>();
 
   static {
     try {
@@ -21,7 +20,7 @@ public class SemeionData implements JtPredictionSampleSupplier {
                     .map(Double::parseDouble)
                     .mapToDouble(Double::doubleValue)
                     .toArray()
-            ).map(dArr -> JtPredictionSample.of(
+            ).map(dArr -> JtTrain.JtSample.of(
                 Arrays.copyOfRange(dArr, 0, 256),
                 Arrays.copyOfRange(dArr, 256, 266)
             )).collect(Collectors.toList())
@@ -30,10 +29,10 @@ public class SemeionData implements JtPredictionSampleSupplier {
     } catch (Exception e) { throw new IllegalStateException(e); }
   }
 
-  private static final JtPredictionSample[] buffer = new JtPredictionSample[samples.size()];
+  private static final JtTrain.JtSample[] buffer = new JtTrain.JtSample[samples.size()];
 
   @Override
-  public JtPredictionSample[] get() {
+  public JtTrain.JtSample[] get() {
     Collections.shuffle(samples);
     return samples.toArray(buffer);
   }
