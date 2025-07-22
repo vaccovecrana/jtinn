@@ -10,8 +10,12 @@ public class JtActivation {
   }
 
   public static class JtLeakyRelu implements JtActivationFn {
+
     private static final long serialVersionUID = JtUtil.version;
     public float α;
+
+    public transient long mult_pos, mult_neg;
+    public transient int shift;
 
     @Override public float apply(float z) {
       return z > 0 ? z : α * z;
@@ -28,7 +32,13 @@ public class JtActivation {
   }
 
   public static class JtSigmoid implements JtActivationFn {
+
     private static final long serialVersionUID = JtUtil.version;
+
+    public transient long mult_index;
+    public transient int shift;
+    public transient int offset;
+    public transient byte[] table;
 
     @Override public float apply(float z) {
       return 1.0f / (1.0f + (float) Math.exp(-z));

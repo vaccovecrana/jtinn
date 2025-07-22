@@ -8,6 +8,13 @@ public class JtUtil {
 
   public static final long version = 2;
 
+  public static int clamp(long value, int min, int max) {
+    if (min > max) {
+      throw new IllegalArgumentException(min + " > " + max);
+    }
+    return (int) Math.min(max, Math.max(value, min));
+  }
+
   public static void checkSize(float[] in0, float[] in1) {
     if (in0 == null || in1 == null) {
       throw new IllegalArgumentException(
