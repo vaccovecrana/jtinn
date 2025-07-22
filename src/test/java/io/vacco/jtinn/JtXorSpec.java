@@ -35,6 +35,7 @@ public class JtXorSpec {
       );
 
       trainer.start();
+      net.quantize(xor, 16);
       for (var smp : xor.get()) {
         var guess = net.estimate(smp.features);
         System.out.printf("Sample: %s => %s%n", asString14d(smp.features), asString14d(guess));
