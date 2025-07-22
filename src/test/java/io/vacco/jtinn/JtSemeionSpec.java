@@ -12,11 +12,11 @@ import static j8spec.J8Spec.*;
 @RunWith(J8SpecRunner.class)
 public class JtSemeionSpec {
 
-  public static final JtActivation.JtActivationFn reluFn = new JtActivation.JtLeakyRelu().withAlpha(0.08);
-  public static final JtUpdate.JtUpdater reluUpd = new JtUpdate.JtSgdUpdater().init(0.025, 0.99);
+  public static final JtActivation.JtActivationFn reluFn = new JtActivation.JtLeakyRelu().withAlpha(0.08f);
+  public static final JtUpdate.JtUpdater reluUpd = new JtUpdate.JtSgdUpdater().init(0.025f, 0.99f);
 
   public static final JtActivation.JtActivationFn sigmoidFn = new JtActivation.JtSigmoid();
-  public static final JtUpdate.JtUpdater sigmoidUpd = new JtUpdate.JtSgdUpdater().init(1.0, 0.99);
+  public static final JtUpdate.JtUpdater sigmoidUpd = new JtUpdate.JtSgdUpdater().init(1.0f, 0.99f);
 
   public static final String sigmoid = "sigmoid.ser", leakyRelu = "leaky-relu.ser";
 
@@ -35,7 +35,7 @@ public class JtSemeionSpec {
 
     JtUtil.writeNet(net, new FileOutputStream(netFile));
 
-    var err = new double[1];
+    var err = new float[1];
     var digits = new SemeionData();
     var trainer = new JtTrain.JtTrainer(net,
         (network, epoch, error) -> {

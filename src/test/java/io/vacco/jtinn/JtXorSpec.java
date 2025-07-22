@@ -20,7 +20,7 @@ public class JtXorSpec {
           new JtLayers.JtLayer().init(4, fn),
           new JtLayers.JtOutputLayer().init(1, fn, eFn)
       );
-      var err = new double[1];
+      var err = new float[1];
       var xor = new XorData();
       var trainer = new JtTrain.JtTrainer(
           net,

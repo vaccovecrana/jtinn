@@ -21,12 +21,12 @@ public class JtInit {
 
     @Override public void apply(JtLayers.JtLayer layer) {
       for (int i = 0; i < layer.b.length; i++) {
-        layer.b[i] = r.nextDouble() - 0.5;
+        layer.b[i] = r.nextFloat() - 0.5f;
       }
       if (layer.w != null) {
         for (int k = 0; k < layer.w.length; k++) {
           for (int j = 0; j < layer.w[k].length; j++) {
-            layer.w[k][j] = r.nextDouble() - 0.5;
+            layer.w[k][j] = r.nextFloat() - 0.5f;
           }
         }
       }

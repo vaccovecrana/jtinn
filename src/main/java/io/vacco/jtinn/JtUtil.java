@@ -8,7 +8,7 @@ public class JtUtil {
 
   public static final long version = 2;
 
-  public static void checkSize(double[] in0, double[] in1) {
+  public static void checkSize(float[] in0, float[] in1) {
     if (in0 == null || in1 == null) {
       throw new IllegalArgumentException(
           format("Invalid array inputs: [%s], [%s]",

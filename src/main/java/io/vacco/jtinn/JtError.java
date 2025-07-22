@@ -5,16 +5,16 @@ import java.io.Serializable;
 public class JtError {
 
   public interface JtErrorFn extends Serializable {
-    double of(double a, double b);
-    double pd(double act, double target);
+    float of(float a, float b);
+    float pd(float act, float target);
   }
 
   public static class JtMeanSquaredError implements JtErrorFn {
     private static final long serialVersionUID = JtUtil.version;
-    @Override public double of(double a, double b) {
+    @Override public float of(float a, float b) {
       return 0.5f * (a - b) * (a - b);
     }
-    @Override public double pd(double act, double target) {
+    @Override public float pd(float act, float target) {
       return act - target;
     }
   }

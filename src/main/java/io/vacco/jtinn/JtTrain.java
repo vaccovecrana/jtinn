@@ -6,10 +6,10 @@ public class JtTrain {
 
   public static class JtSample {
 
-    public double[] features;
-    public double[] labels;
+    public float[] features;
+    public float[] labels;
 
-    public static JtSample of(double[] features, double[] labels) {
+    public static JtSample of(float[] features, float[] labels) {
       var sample = new JtSample();
       sample.features = features;
       sample.labels = labels;
@@ -20,7 +20,7 @@ public class JtTrain {
   public interface JtSampler extends Supplier<JtSample[]> { }
 
   public interface JtStopCondition {
-    boolean evaluate(JtNetwork network, int epoch, double error);
+    boolean evaluate(JtNetwork network, int epoch, float error);
   }
 
   public static class JtTrainer {
@@ -38,7 +38,7 @@ public class JtTrain {
 
     public void start() {
       int epoch = 0;
-      double batchError = -1;
+      float batchError = -1;
       while (!stopFn.evaluate(network, epoch, batchError)) {
         epoch++;
         batchError = 0;

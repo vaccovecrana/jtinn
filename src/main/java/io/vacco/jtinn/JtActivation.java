@@ -5,23 +5,23 @@ import java.io.Serializable;
 public class JtActivation {
 
   public interface JtActivationFn extends Serializable {
-    double apply(double z);
-    double pd(double z);
+    float apply(float z);
+    float pd(float z);
   }
 
   public static class JtLeakyRelu implements JtActivationFn {
     private static final long serialVersionUID = JtUtil.version;
-    public double α;
+    public float α;
 
-    @Override public double apply(double z) {
+    @Override public float apply(float z) {
       return z > 0 ? z : α * z;
     }
 
-    @Override public double pd(double z) {
+    @Override public float pd(float z) {
       return z > 0 ? 1 : α;
     }
 
-    public JtLeakyRelu withAlpha(double α) {
+    public JtLeakyRelu withAlpha(float α) {
       this.α = α;
       return this;
     }
@@ -30,12 +30,12 @@ public class JtActivation {
   public static class JtSigmoid implements JtActivationFn {
     private static final long serialVersionUID = JtUtil.version;
 
-    @Override public double apply(double z) {
-      return 1.0 / (1.0 + Math.exp(-z));
+    @Override public float apply(float z) {
+      return 1.0f / (1.0f + (float) Math.exp(-z));
     }
 
-    @Override public double pd(double z) {
-      return z * (1.0 - z);
+    @Override public float pd(float z) {
+      return z * (1.0f - z);
     }
   }
 

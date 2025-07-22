@@ -14,16 +14,17 @@ public class SemeionData implements JtTrain.JtSampler {
     try {
       try (var lines = Files.lines(f.toPath())) {
         samples.addAll(
-            lines.map(
-                row -> Arrays.stream(
-                    row.split(" "))
-                    .map(Double::parseDouble)
-                    .mapToDouble(Double::doubleValue)
-                    .toArray()
-            ).map(dArr -> JtTrain.JtSample.of(
-                Arrays.copyOfRange(dArr, 0, 256),
-                Arrays.copyOfRange(dArr, 256, 266)
-            )).collect(Collectors.toList())
+          lines.map(row -> {
+            var vals = row.split(" ");
+            var out = new float[vals.length];
+            for (int i = 0; i < vals.length; i++) {
+              out[i] = Float.parseFloat(vals[i]);
+            }
+            return out;
+          }).map(fA -> JtTrain.JtSample.of(
+            Arrays.copyOfRange(fA, 0, 256),
+            Arrays.copyOfRange(fA, 256, 266)
+          )).collect(Collectors.toList())
         );
       }
     } catch (Exception e) { throw new IllegalStateException(e); }
@@ -36,4 +37,5 @@ public class SemeionData implements JtTrain.JtSampler {
     Collections.shuffle(samples);
     return samples.toArray(buffer);
   }
+
 }
