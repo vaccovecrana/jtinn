@@ -1,19 +1,26 @@
 package io.vacco.jtinn;
 
 import java.util.Arrays;
-import java.util.stream.DoubleStream;
 
 public class JtSpecUtil {
 
-  public static String asString2d(double[] in) {
+  private static Float[] castFa(float[] in) {
+    var out = new Float[in.length];
+    for (int i = 0; i < in.length; i++) {
+      out[i] = in[i];
+    }
+    return out;
+  }
+
+  public static String asString2d(float[] in) {
     return Arrays.toString(
-        DoubleStream.of(in).mapToObj(d -> String.format("%.2f", d)).toArray()
+      Arrays.stream(castFa(in)).map(f -> String.format("%.2f", f)).toArray()
     );
   }
 
-  public static String asString14d(double[] in) {
+  public static String asString14d(float[] in) {
     return Arrays.toString(
-        DoubleStream.of(in).mapToObj(d -> String.format("%.14f", d)).toArray()
+      Arrays.stream(castFa(in)).map(f -> String.format("%.14f", f)).toArray()
     );
   }
 

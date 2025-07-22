@@ -1,35 +1,30 @@
 package io.vacco.jtinn;
 
-import io.vacco.jtinn.net.JtPredictionSample;
-import io.vacco.jtinn.net.JtPredictionSampleSupplier;
+import java.util.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+class XorData implements JtTrain.JtSampler {
 
-class XorData implements JtPredictionSampleSupplier {
-
-  private static JtPredictionSample of(double in0, double in1, double out) {
-    double[] ft = new double[]{in0, in1};
-    double[] lb = new double[]{out};
-    return JtPredictionSample.of(ft, lb);
+  private static JtTrain.JtSample of(float in0, float in1, float out) {
+    var ft = new float[] { in0, in1 };
+    var lb = new float[] { out };
+    return JtTrain.JtSample.of(ft, lb);
   }
 
-  private static final List<JtPredictionSample> trainingList = new ArrayList<>(
-      Arrays.asList(
-          of(0, 0, 0),
-          of(0, 1, 1),
-          of(1, 0, 1),
-          of(1, 1, 0)
-      )
+  private static final List<JtTrain.JtSample> trainingList = new ArrayList<>(
+    Arrays.asList(
+      of(0, 0, 0),
+      of(0, 1, 1),
+      of(1, 0, 1),
+      of(1, 1, 0)
+    )
   );
 
-  private static final JtPredictionSample[] buffer = new JtPredictionSample[trainingList.size()];
+  private static final JtTrain.JtSample[] buffer = new JtTrain.JtSample[trainingList.size()];
 
   @Override
-  public JtPredictionSample[] get() {
+  public JtTrain.JtSample[] get() {
     Collections.shuffle(trainingList);
     return trainingList.toArray(buffer);
   }
+
 }
