@@ -12,15 +12,15 @@ public class JtSpecUtil {
     return out;
   }
 
-  public static String asString2d(float[] in) {
+  public static String asString2f(float[] in) {
     return Arrays.toString(
-      Arrays.stream(castFa(in)).map(f -> String.format("%.2f", f)).toArray()
+      Arrays.stream(castFa(in)).map(f -> String.format("%.02f", f)).toArray()
     );
   }
 
-  public static String asString14d(float[] in) {
+  public static String asString8f(float[] in) {
     return Arrays.toString(
-      Arrays.stream(castFa(in)).map(f -> String.format("%.14f", f)).toArray()
+      Arrays.stream(castFa(in)).map(f -> String.format("%.08f", f)).toArray()
     );
   }
 

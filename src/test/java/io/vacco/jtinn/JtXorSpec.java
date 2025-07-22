@@ -5,7 +5,7 @@ import j8spec.junit.J8SpecRunner;
 import org.junit.runner.RunWith;
 
 import static j8spec.J8Spec.*;
-import static io.vacco.jtinn.JtSpecUtil.asString14d;
+import static io.vacco.jtinn.JtSpecUtil.asString8f;
 
 @DefinedOrder
 @RunWith(J8SpecRunner.class)
@@ -27,7 +27,7 @@ public class JtXorSpec {
           (network, epoch, error) -> {
             err[0] = error;
             if (epoch % 1000 == 0) {
-              System.out.printf("Epoch [%s] Delta err: %s%n", epoch, asString14d(err));
+              System.out.printf("Epoch [%03d] Delta err: %s%n", epoch, asString8f(err));
             }
             return epoch == 9000;
           },
@@ -38,7 +38,7 @@ public class JtXorSpec {
       net.quantize(xor, 16);
       for (var smp : xor.get()) {
         var guess = net.estimate(smp.features);
-        System.out.printf("Sample: %s => %s%n", asString14d(smp.features), asString14d(guess));
+        System.out.printf("Sample: %s => %s%n", asString8f(smp.features), asString8f(guess));
       }
     });
   }

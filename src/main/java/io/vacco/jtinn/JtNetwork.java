@@ -107,7 +107,7 @@ public class JtNetwork implements Serializable {
   private void forwardQuant(byte[] in_q) {
     activateQuant(in_q, layers[0]);
     for (int i = 1; i < layers.length; i++) {
-      activateQuant(layers[i - 1].ar_q, layers[i]);
+      activateQuant(layers[i - 1].q8ar, layers[i]);
     }
   }
 
@@ -115,19 +115,19 @@ public class JtNetwork implements Serializable {
     for (int j = 0; j < l.size(); j++) {
       int z = 0;
       for (int a = 0; a < l.weightSize(); a++) {
-        z += (int) in_q[a] * (int) l.w_q[j][a];
+        z += (int) in_q[a] * (int) l.q8w[j][a];
       }
-      z += l.b_q[j];
+      z += l.q8b[j];
       if (l.actFn instanceof JtActivation.JtLeakyRelu) {
         var fn = (JtActivation.JtLeakyRelu) l.actFn;
-        long mult = z > 0 ? fn.mult_pos : fn.mult_neg;
-        long a_long = ((long) z * mult) >> fn.shift;
-        l.ar_q[j] = (byte) clamp(a_long, -128, 127);
+        long mult = z > 0 ? fn.q8mp : fn.q8mn;
+        long a_long = ((long) z * mult) >> fn.q8s;
+        l.q8ar[j] = (byte) clamp(a_long, -128, 127);
       } else if (l.actFn instanceof JtActivation.JtSigmoid) {
         var fn = (JtActivation.JtSigmoid) l.actFn;
-        long index_long = (((long) z * fn.mult_index) >> fn.shift) + fn.offset;
-        int index = clamp(index_long, 0, fn.table.length - 1);
-        l.ar_q[j] = fn.table[index];
+        long index_long = (((long) z * fn.q8mi) >> fn.q8s) + fn.q8o;
+        int index = clamp(index_long, 0, fn.q8t.length - 1);
+        l.q8ar[j] = fn.q8t[index];
       } else {
         throw new IllegalStateException("Unsupported activation for quantization: " + l.actFn.getClass());
       }
@@ -144,7 +144,7 @@ public class JtNetwork implements Serializable {
       var out = getOutput();
       float[] result = new float[out.size()];
       for (int j = 0; j < result.length; j++) {
-        result[j] = out.ar_q[j] * out.scale_a;
+        result[j] = out.q8ar[j] * out.q8sa;
       }
       return result;
     } else {
@@ -154,82 +154,82 @@ public class JtNetwork implements Serializable {
   }
 
   public void quantize(JtTrain.JtSampler calib, int numBatches) {
-    float min_input = Float.MAX_VALUE;
-    float max_input = -Float.MAX_VALUE;
+    var min_input = Float.MAX_VALUE;
+    var max_input = -Float.MAX_VALUE;
     for (JtLayers.JtLayer l : layers) {
-      l.min_a = Float.MAX_VALUE;
-      l.max_a = -Float.MAX_VALUE;
+      l.q8aMin = Float.MAX_VALUE;
+      l.q8aMax = -Float.MAX_VALUE;
     }
     for (int b = 0; b < numBatches; b++) {
-      JtTrain.JtSample[] batch = calib.get();
-      for (JtTrain.JtSample s : batch) {
+      var batch = calib.get();
+      for (var s : batch) {
         forward(s.features, false);
-        for (float f : s.features) {
+        for (var f : s.features) {
           min_input = min(min_input, f);
           max_input = max(max_input, f);
         }
-        for (JtLayers.JtLayer l : layers) {
+        for (var l : layers) {
           for (float aa : l.ar) {
-            l.min_a = min(l.min_a, aa);
-            l.max_a = max(l.max_a, aa);
+            l.q8aMin = min(l.q8aMin, aa);
+            l.q8aMax = max(l.q8aMax, aa);
           }
         }
       }
     }
     scale_input = max(abs(min_input), abs(max_input)) / 127f;
     if (scale_input == 0) scale_input = 1f / 127f;
-    layers[0].scale_in = scale_input;
+    layers[0].q8sin = scale_input;
     for (int i = 0; i < layers.length; i++) {
-      JtLayers.JtLayer l = layers[i];
-      l.scale_a = max(abs(l.min_a), abs(l.max_a)) / 127f;
-      if (l.scale_a == 0) l.scale_a = 1f / 127f;
-      l.scale_w = 0;
+      var l = layers[i];
+      l.q8sa = max(abs(l.q8aMin), abs(l.q8aMax)) / 127f;
+      if (l.q8sa == 0) l.q8sa = 1f / 127f;
+      l.q8sw = 0;
       for (float[] row : l.w) {
         for (float ww : row) {
-          l.scale_w = max(l.scale_w, abs(ww));
+          l.q8sw = max(l.q8sw, abs(ww));
         }
       }
-      l.scale_w /= 127f;
-      if (l.scale_w == 0) l.scale_w = 1f / 127f;
+      l.q8sw /= 127f;
+      if (l.q8sw == 0) l.q8sw = 1f / 127f;
       if (i < layers.length - 1) {
-        layers[i + 1].scale_in = l.scale_a;
+        layers[i + 1].q8sin = l.q8sa;
       }
     }
-    for (JtLayers.JtLayer l : layers) {
-      l.w_q = new byte[l.size()][l.weightSize()];
+    for (var l : layers) {
+      l.q8w = new byte[l.size()][l.weightSize()];
       for (int j = 0; j < l.size(); j++) {
         for (int k = 0; k < l.weightSize(); k++) {
-          l.w_q[j][k] = (byte) clamp(round(l.w[j][k] / l.scale_w), -128, 127);
+          l.q8w[j][k] = (byte) clamp(round(l.w[j][k] / l.q8sw), -128, 127);
         }
       }
-      l.b_q = new int[l.size()];
+      l.q8b = new int[l.size()];
       for (int j = 0; j < l.size(); j++) {
-        float sbw = l.scale_in * l.scale_w;
-        l.b_q[j] = round(l.b[j] / sbw);
+        float sbw = l.q8sin * l.q8sw;
+        l.q8b[j] = round(l.b[j] / sbw);
       }
-      l.ar_q = new byte[l.size()];
+      l.q8ar = new byte[l.size()];
       int fixedShift = 20;
       float zClip = 8.0f;
       int tableSize = 256;
       if (l.actFn instanceof JtActivation.JtLeakyRelu) {
         var fn = (JtActivation.JtLeakyRelu) l.actFn;
-        float m = l.scale_in * l.scale_w / l.scale_a;
-        fn.shift = fixedShift;
-        fn.mult_pos = round(m * (1L << fixedShift));
-        fn.mult_neg = round(m * fn.α * (1L << fixedShift));
+        float m = l.q8sin * l.q8sw / l.q8sa;
+        fn.q8s = fixedShift;
+        fn.q8mp = round(m * (1L << fixedShift));
+        fn.q8mn = round(m * fn.α * (1L << fixedShift));
       } else if (l.actFn instanceof JtActivation.JtSigmoid) {
         var fn = (JtActivation.JtSigmoid) l.actFn;
         float step = (2.0f * zClip) / (tableSize - 1.0f);
-        float k = (l.scale_in * l.scale_w) / step;
-        fn.shift = fixedShift;
-        fn.mult_index = round(k * (1L << fixedShift));
-        fn.offset = tableSize / 2;
-        fn.table = new byte[tableSize];
+        float k = (l.q8sin * l.q8sw) / step;
+        fn.q8s = fixedShift;
+        fn.q8mi = round(k * (1L << fixedShift));
+        fn.q8o = tableSize / 2;
+        fn.q8t = new byte[tableSize];
         for (int i = 0; i < tableSize; i++) {
-          float z = (i - fn.offset) * step;
+          float z = (i - fn.q8o) * step;
           float sig = 1.0f / (1.0f + (float) exp(-z));
-          int aq = round(sig / l.scale_a);
-          fn.table[i] = (byte) clamp(aq, -128, 127);
+          int aq = round(sig / l.q8sa);
+          fn.q8t[i] = (byte) clamp(aq, -128, 127);
         }
       }
     }

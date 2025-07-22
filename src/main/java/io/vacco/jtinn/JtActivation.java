@@ -14,8 +14,8 @@ public class JtActivation {
     private static final long serialVersionUID = JtUtil.version;
     public float α;
 
-    public transient long mult_pos, mult_neg;
-    public transient int shift;
+    public long q8mp, q8mn; // mult pos, mult neg
+    public int  q8s;        // shift
 
     @Override public float apply(float z) {
       return z > 0 ? z : α * z;
@@ -35,10 +35,10 @@ public class JtActivation {
 
     private static final long serialVersionUID = JtUtil.version;
 
-    public transient long mult_index;
-    public transient int shift;
-    public transient int offset;
-    public transient byte[] table;
+    public long   q8mi; // mult index
+    public int    q8s;  // shift
+    public int    q8o;  // offset
+    public byte[] q8t;  // table
 
     @Override public float apply(float z) {
       return 1.0f / (1.0f + (float) Math.exp(-z));

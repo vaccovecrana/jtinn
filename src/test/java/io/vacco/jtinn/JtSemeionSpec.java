@@ -41,7 +41,7 @@ public class JtSemeionSpec {
         (network, epoch, error) -> {
           err[0] = error;
           if (epoch % 20 == 0) {
-            System.out.printf("Epoch [%s] Delta err: %s%n", epoch, asString14d(err));
+            System.out.printf("Epoch [%03d] Delta err: %s%n", epoch, asString8f(err));
           }
           return epoch == 200;
         },
@@ -56,9 +56,9 @@ public class JtSemeionSpec {
     var sample = digits.get()[0];
     var guess = net0.estimate(sample.features);
 
-    System.out.printf("Sample: %s%n", asString2d(sample.features));
-    System.out.printf("Guess:  %s%n", asString2d(guess));
-    System.out.printf("Actual: %s%n", asString2d(sample.labels));
+    System.out.printf("Sample: %s%n", asString2f(sample.features));
+    System.out.printf("Guess:  %s%n", asString2f(guess));
+    System.out.printf("Actual: %s%n", asString2f(sample.labels));
   }
 
   static {

@@ -17,11 +17,11 @@ public class JtLayers {
     /** Weights from input layer, if any */
     public float[][] w;
 
-    public transient float scale_in, scale_a, scale_w;
-    public transient float min_a, max_a;
-    public transient byte[][] w_q;
-    public transient int[] b_q;
-    public transient byte[] ar_q;
+    public float    q8sin,  q8sa, q8sw; // scale in, scale a, scale w
+    public float    q8aMin, q8aMax;
+    public byte[][] q8w;
+    public int[]    q8b;
+    public byte[]   q8ar;
 
     public JtActivation.JtActivationFn actFn;
 
