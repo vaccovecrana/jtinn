@@ -28,7 +28,7 @@ public class JtXorTest {
         (network, epoch, error) -> {
           err[0] = error;
           if (epoch % 1000 == 0) {
-            System.out.printf("Epoch [%s] Delta err: %s%n", epoch, asString8f(err));
+            System.out.printf("Epoch [%03d] Delta err: %s%n", epoch, asString8f(err));
           }
           return epoch == 9000;
         },
