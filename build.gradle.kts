@@ -5,6 +5,10 @@ version = "3.8.0"
 
 configure<io.vacco.oss.gitflow.GsPluginProfileExtension> {
   addJ8Spec()
-  addClasspathHell()
   sharedLibrary(true, false)
+}
+
+tasks.named<ProcessResources>("processResources") {
+  from("src/main/c/libjtinn.so")    { into("io/vacco/jtinn") }
+  from("src/main/c/libjtinn.dylib") { into("io/vacco/jtinn") }
 }
