@@ -17,12 +17,6 @@ public class JtLayers {
     /** Weights from input layer, if any */
     public float[][] w;
 
-    public float    q8sin,  q8sa, q8sw; // scale in, scale a, scale w
-    public float    q8aMin, q8aMax;
-    public byte[][] q8w;
-    public int[]    q8b;
-    public byte[]   q8ar;
-
     public JtActivation.JtActivationFn actFn;
 
     public JtLayer init(int size, JtActivation.JtActivationFn actFn) {

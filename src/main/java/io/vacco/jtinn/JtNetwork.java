@@ -2,22 +2,12 @@ package io.vacco.jtinn;
 
 import java.io.Serializable;
 
-import static java.lang.Math.min;
-import static java.lang.Math.max;
-import static java.lang.Math.abs;
-import static java.lang.Math.exp;
-import static java.lang.Math.round;
-import static io.vacco.jtinn.JtUtil.clamp;
-
 public class JtNetwork implements Serializable {
 
   private static final long serialVersionUID = JtUtil.version;
 
   public JtLayers.JtLayer[] layers;
   public JtUpdate.JtUpdater updater;
-
-  private transient boolean quantized = false;
-  private transient float scale_input;
 
   public JtNetwork init(int inputSize, JtInit.JtParamInitializer paramInitializer,
                         JtUpdate.JtUpdater updater, JtLayers.JtLayer ... layers) {
@@ -104,136 +94,9 @@ public class JtNetwork implements Serializable {
     return totalError(out);
   }
 
-  private void forwardQuant(byte[] in_q) {
-    activateQuant(in_q, layers[0]);
-    for (int i = 1; i < layers.length; i++) {
-      activateQuant(layers[i - 1].q8ar, layers[i]);
-    }
-  }
-
-  private void activateQuant(byte[] in_q, JtLayers.JtLayer l) {
-    for (int j = 0; j < l.size(); j++) {
-      int z = 0;
-      for (int a = 0; a < l.weightSize(); a++) {
-        z += (int) in_q[a] * (int) l.q8w[j][a];
-      }
-      z += l.q8b[j];
-      if (l.actFn instanceof JtActivation.JtLeakyRelu) {
-        var fn = (JtActivation.JtLeakyRelu) l.actFn;
-        long mult = z > 0 ? fn.q8mp : fn.q8mn;
-        long a_long = ((long) z * mult) >> fn.q8s;
-        l.q8ar[j] = (byte) clamp(a_long, -128, 127);
-      } else if (l.actFn instanceof JtActivation.JtSigmoid) {
-        var fn = (JtActivation.JtSigmoid) l.actFn;
-        long index_long = (((long) z * fn.q8mi) >> fn.q8s) + fn.q8o;
-        int index = clamp(index_long, 0, fn.q8t.length - 1);
-        l.q8ar[j] = fn.q8t[index];
-      } else {
-        throw new IllegalStateException("Unsupported activation for quantization: " + l.actFn.getClass());
-      }
-    }
-  }
-
   public float[] estimate(float[] in) {
-    if (quantized) {
-      byte[] in_q = new byte[in.length];
-      for (int i = 0; i < in.length; i++) {
-        in_q[i] = (byte) clamp(round(in[i] / scale_input), -128, 127);
-      }
-      forwardQuant(in_q);
-      var out = getOutput();
-      float[] result = new float[out.size()];
-      for (int j = 0; j < result.length; j++) {
-        result[j] = out.q8ar[j] * out.q8sa;
-      }
-      return result;
-    } else {
-      forward(in, false);
-      return getOutput().ar;
-    }
-  }
-
-  public void quantize(JtTrain.JtSampler calib, int numBatches) {
-    var min_input = Float.MAX_VALUE;
-    var max_input = -Float.MAX_VALUE;
-    for (JtLayers.JtLayer l : layers) {
-      l.q8aMin = Float.MAX_VALUE;
-      l.q8aMax = -Float.MAX_VALUE;
-    }
-    for (int b = 0; b < numBatches; b++) {
-      var batch = calib.get();
-      for (var s : batch) {
-        forward(s.features, false);
-        for (var f : s.features) {
-          min_input = min(min_input, f);
-          max_input = max(max_input, f);
-        }
-        for (var l : layers) {
-          for (float aa : l.ar) {
-            l.q8aMin = min(l.q8aMin, aa);
-            l.q8aMax = max(l.q8aMax, aa);
-          }
-        }
-      }
-    }
-    scale_input = max(abs(min_input), abs(max_input)) / 127f;
-    if (scale_input == 0) scale_input = 1f / 127f;
-    layers[0].q8sin = scale_input;
-    for (int i = 0; i < layers.length; i++) {
-      var l = layers[i];
-      l.q8sa = max(abs(l.q8aMin), abs(l.q8aMax)) / 127f;
-      if (l.q8sa == 0) l.q8sa = 1f / 127f;
-      l.q8sw = 0;
-      for (float[] row : l.w) {
-        for (float ww : row) {
-          l.q8sw = max(l.q8sw, abs(ww));
-        }
-      }
-      l.q8sw /= 127f;
-      if (l.q8sw == 0) l.q8sw = 1f / 127f;
-      if (i < layers.length - 1) {
-        layers[i + 1].q8sin = l.q8sa;
-      }
-    }
-    for (var l : layers) {
-      l.q8w = new byte[l.size()][l.weightSize()];
-      for (int j = 0; j < l.size(); j++) {
-        for (int k = 0; k < l.weightSize(); k++) {
-          l.q8w[j][k] = (byte) clamp(round(l.w[j][k] / l.q8sw), -128, 127);
-        }
-      }
-      l.q8b = new int[l.size()];
-      for (int j = 0; j < l.size(); j++) {
-        float sbw = l.q8sin * l.q8sw;
-        l.q8b[j] = round(l.b[j] / sbw);
-      }
-      l.q8ar = new byte[l.size()];
-      int fixedShift = 20;
-      float zClip = 8.0f;
-      int tableSize = 256;
-      if (l.actFn instanceof JtActivation.JtLeakyRelu) {
-        var fn = (JtActivation.JtLeakyRelu) l.actFn;
-        float m = l.q8sin * l.q8sw / l.q8sa;
-        fn.q8s = fixedShift;
-        fn.q8mp = round(m * (1L << fixedShift));
-        fn.q8mn = round(m * fn.α * (1L << fixedShift));
-      } else if (l.actFn instanceof JtActivation.JtSigmoid) {
-        var fn = (JtActivation.JtSigmoid) l.actFn;
-        float step = (2.0f * zClip) / (tableSize - 1.0f);
-        float k = (l.q8sin * l.q8sw) / step;
-        fn.q8s = fixedShift;
-        fn.q8mi = round(k * (1L << fixedShift));
-        fn.q8o = tableSize / 2;
-        fn.q8t = new byte[tableSize];
-        for (int i = 0; i < tableSize; i++) {
-          float z = (i - fn.q8o) * step;
-          float sig = 1.0f / (1.0f + (float) exp(-z));
-          int aq = round(sig / l.q8sa);
-          fn.q8t[i] = (byte) clamp(aq, -128, 127);
-        }
-      }
-    }
-    quantized = true;
+    forward(in, false);
+    return getOutput().ar;
   }
 
   public JtLayers.JtOutputLayer getOutput() {

@@ -49,7 +49,6 @@ public class JtSemeionSpec {
     );
 
     trainer.start();
-    net.quantize(digits, 1500);
     JtUtil.writeNet(net, new FileOutputStream(netFile));
 
     var net0 = JtUtil.readNet(new FileInputStream(netFile));
