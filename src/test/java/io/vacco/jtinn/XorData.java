@@ -5,8 +5,11 @@ import java.util.*;
 class XorData implements JtTrain.JtSampler {
 
   private static JtTrain.JtSample of(float in0, float in1, float out) {
-    var ft = new float[] { in0, in1 };
-    var lb = new float[] { out };
+    var ft = new JtTensor3(2, 1, 1);
+    ft.data[0] = in0;
+    ft.data[1] = in1;
+    var lb = new JtTensor3(1, 1, 1);
+    lb.data[0] = out;
     return JtTrain.JtSample.of(ft, lb);
   }
 

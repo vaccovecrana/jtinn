@@ -1,37 +1,43 @@
 package io.vacco.jtinn;
 
 import java.io.*;
+import java.util.Arrays;
 
 import static java.lang.String.format;
 
 public class JtUtil {
 
-  public static final long version = 2;
+  public static final long version = 3;
 
-  public static int clamp(long value, int min, int max) {
-    if (min > max) {
-      throw new IllegalArgumentException(min + " > " + max);
-    }
-    return (int) Math.min(max, Math.max(value, min));
+  public static int[] shape3(int c, int h, int w) {
+    return new int[] { c, h, w };
   }
 
-  public static void checkSize(float[] in0, float[] in1) {
+  public static void checkTensor(JtTensor3 in0, JtTensor3 in1) {
     if (in0 == null || in1 == null) {
       throw new IllegalArgumentException(
-          format("Invalid array inputs: [%s], [%s]",
-              in0 != null ? in0.length : null,
-              in1 != null ? in1.length : null
-          )
+        format("Invalid tensor inputs: [%s], [%s]",
+          in0 != null ? in0.size() : null,
+          in1 != null ? in1.size() : null
+        )
       );
     }
-    if (in0.length != in1.length) {
+    checkShape(in0.shape, in1.shape);
+  }
+
+  public static void checkShape(int[] s0, int[] s1) {
+    if (!Arrays.equals(s0, s1)) {
       throw new IllegalArgumentException(
-          format("Invalid input size: [%s], [%s]", in0.length, in1.length)
+        format("Invalid shape: [%s], [%s]", Arrays.toString(s0), Arrays.toString(s1))
       );
     }
   }
 
-  public static void writeNet(JtNetwork net, OutputStream out) {
+  public static int product(int c, int h, int w) {
+    return c * h * w;
+  }
+
+  public static void writeNet(JtNetwork3 net, OutputStream out) {
     try {
       var oos = new ObjectOutputStream(out);
       oos.writeObject(net);
@@ -41,10 +47,10 @@ public class JtUtil {
     }
   }
 
-  public static JtNetwork readNet(InputStream in) {
+  public static JtNetwork3 readNet(InputStream in) {
     try {
       var ois = new ObjectInputStream(in);
-      var net = (JtNetwork) ois.readObject();
+      var net = (JtNetwork3) ois.readObject();
       ois.close();
       return net;
     } catch (Exception e) {

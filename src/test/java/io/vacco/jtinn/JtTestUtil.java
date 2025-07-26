@@ -2,7 +2,7 @@ package io.vacco.jtinn;
 
 import java.util.Arrays;
 
-public class JtSpecUtil {
+public class JtTestUtil {
 
   private static Float[] castFa(float[] in) {
     var out = new Float[in.length];

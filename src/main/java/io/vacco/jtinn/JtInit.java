@@ -5,7 +5,7 @@ import java.util.Random;
 public class JtInit {
 
   public interface JtParamInitializer {
-    void apply(JtLayers.JtLayer layer);
+    void apply(JtLayers.JtLayer3 layer);
   }
 
   public static class JtRandomInitializer implements JtParamInitializer {
@@ -19,7 +19,7 @@ public class JtInit {
       return this;
     }
 
-    @Override public void apply(JtLayers.JtLayer layer) {
+    @Override public void apply(JtLayers.JtLayer3 layer) {
       for (int i = 0; i < layer.b.length; i++) {
         layer.b[i] = r.nextFloat() - 0.5f;
       }

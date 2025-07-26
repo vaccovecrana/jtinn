@@ -22,8 +22,8 @@ public class SemeionData implements JtTrain.JtSampler {
             }
             return out;
           }).map(fA -> JtTrain.JtSample.of(
-            Arrays.copyOfRange(fA, 0, 256),
-            Arrays.copyOfRange(fA, 256, 266)
+            new JtTensor3(256, 1, 1, Arrays.copyOfRange(fA, 0, 256)),
+            new JtTensor3(10, 1, 1, Arrays.copyOfRange(fA, 256, 266))
           )).collect(Collectors.toList())
         );
       }
