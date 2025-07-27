@@ -53,9 +53,4 @@ public class JtTensor3 implements Serializable {
     return this;
   }
 
-  public void copyFrom(JtTensor3 src) {
-    JtUtil.checkTensor(this, src);
-    System.arraycopy(src.data, 0, data, 0, data.length);
-  }
-
 }

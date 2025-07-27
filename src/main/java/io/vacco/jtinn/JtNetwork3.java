@@ -84,6 +84,11 @@ public class JtNetwork3 implements Serializable {
   }
 
   public float train(JtTensor3 in, JtTensor3 out) {
+    for (JtLayers.JtLayer3 l : layers) {
+      if (l instanceof JtLayers.JtConvLayer3) {
+        throw new UnsupportedOperationException("Training not supported for convolutional layers");
+      }
+    }
     forward(in, true);
     backProp(in, out);
     return totalError(out);
