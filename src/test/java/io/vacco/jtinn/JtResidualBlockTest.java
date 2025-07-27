@@ -63,16 +63,27 @@ public class JtResidualBlockTest {
       rb.allocateParams();
       initializer.apply(rb);
       rb.flattenWeights();
-      // Set to center 1, others 0 for conv1, conv2; for shortcut 1x1 weight 1
+      // Set weights to center 1, others 0 for conv1 (inChannels=1)
       for (int oc = 0; oc < 2; oc++) {
         for (int ic = 0; ic < 1; ic++) {
           for (int kh = 0; kh < 3; kh++) {
             for (int kw = 0; kw < 3; kw++) {
               rb.conv1.weights[oc][ic][kh][kw] = (kh == 1 && kw == 1) ? 1.0f : 0.0f;
-              rb.conv2.weights[oc][ic][kh][kw] = (kh == 1 && kw == 1) ? 1.0f : 0.0f;
             }
           }
         }
+      }
+      // Set weights for conv2 (inChannels=2), center 1 only for ic=0, 0 for ic=1
+      for (int oc = 0; oc < 2; oc++) {
+        for (int ic = 0; ic < 2; ic++) {
+          for (int kh = 0; kh < 3; kh++) {
+            for (int kw = 0; kw < 3; kw++) {
+              rb.conv2.weights[oc][ic][kh][kw] = (kh == 1 && kw == 1 && ic == 0) ? 1.0f : 0.0f;
+            }
+          }
+        }
+      }
+      for (int oc = 0; oc < 2; oc++) {
         for (int ic = 0; ic < 1; ic++) {
           rb.shortcut.conv.weights[oc][ic][0][0] = 1.0f;
         }
@@ -100,16 +111,15 @@ public class JtResidualBlockTest {
         input.data[i] = i + 1;
       }
       var out = rb.forward(input, false);
-      assertEquals(2, out.get(0,0,0), 0.01);
-      assertEquals(6, out.get(0,0,1), 0.01);
-      assertEquals(10, out.get(0,0,2), 0.01);
-      assertEquals(22, out.get(0,1,0), 0.01);
-      assertEquals(26, out.get(0,1,1), 0.01);
-      assertEquals(30, out.get(0,1,2), 0.01);
-      assertEquals(42, out.get(0,2,0), 0.01);
-      assertEquals(46, out.get(0,2,1), 0.01);
-      assertEquals(50, out.get(0,2,2), 0.01);
-      // Check channel 1 same as channel 0
+      assertEquals(2.0,  out.get(0, 0, 0), 0.01);
+      assertEquals(6.0,  out.get(0, 0, 1), 0.01);
+      assertEquals(10.0, out.get(0, 0, 2), 0.01);
+      assertEquals(22.0, out.get(0, 1, 0), 0.01);
+      assertEquals(26.0, out.get(0, 1, 1), 0.01);
+      assertEquals(30.0, out.get(0, 1, 2), 0.01);
+      assertEquals(42.0, out.get(0, 2, 0), 0.01);
+      assertEquals(46.0, out.get(0, 2, 1), 0.01);
+      assertEquals(50.0, out.get(0, 2, 2), 0.01);
       assertEquals(out.get(0,1,1), out.get(1,1,1), 0.01);
       System.out.println(JtTestUtil.tensorToString(input));
       System.out.println(JtTestUtil.tensorToString(out));
