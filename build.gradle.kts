@@ -12,3 +12,10 @@ tasks.named<ProcessResources>("processResources") {
   from("src/main/c/libjtinn.so")    { into("io/vacco/jtinn") }
   from("src/main/c/libjtinn.dylib") { into("io/vacco/jtinn") }
 }
+
+tasks.jacocoTestReport {
+  reports {
+    xml.required = true
+    csv.required = true
+  }
+}
