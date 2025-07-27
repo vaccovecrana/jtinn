@@ -39,4 +39,5 @@ public class JtProjectionLayer extends JtLayers.JtLayer3 {
     x = bn.forward(x, training);
     return x;
   }
+
 }
