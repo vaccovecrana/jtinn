@@ -127,9 +127,9 @@ public class JtLayers {
       int outW = (inW - kernelSize + 2 * padding) / stride + 1;
       outputShape[1] = outH;
       outputShape[2] = outW;
-      a = new JtTensor3(outputShape[0], outH, outW);
+      a  = new JtTensor3(outputShape[0], outH, outW);
       ar = new JtTensor3(outputShape[0], outH, outW);
-      δ = new JtTensor3(outputShape[0], outH, outW);
+      δ  = new JtTensor3(outputShape[0], outH, outW);
     }
 
     public void allocateParams() {
@@ -199,9 +199,9 @@ public class JtLayers {
 
     public void calculateOutputShape(int[] inputShape) {
       this.outputShape = inputShape.clone();
-      this.a = new JtTensor3(outputShape[0], outputShape[1], outputShape[2]);
+      this.a  = new JtTensor3(outputShape[0], outputShape[1], outputShape[2]);
       this.ar = new JtTensor3(outputShape[0], outputShape[1], outputShape[2]);
-      this.δ = new JtTensor3(outputShape[0], outputShape[1], outputShape[2]);
+      this.δ  = new JtTensor3(outputShape[0], outputShape[1], outputShape[2]);
     }
 
     public void allocateParams() {
@@ -238,7 +238,7 @@ public class JtLayers {
   public static class JtMaxPoolLayer3 extends JtLayer3 {
     private static final long serialVersionUID = JtUtil.version;
 
-    public int kernelSize = 2, stride = 2;
+    public int kernelSize = 2, stride = 2, padding = 0;
 
     public JtMaxPoolLayer3 init(int kernelSize, int stride) {
       this.kernelSize = kernelSize;
@@ -248,8 +248,8 @@ public class JtLayers {
 
     public void calculateOutputShape(int[] inputShape) {
       int inC = inputShape[0], inH = inputShape[1], inW = inputShape[2];
-      int outH = (inH - kernelSize) / stride + 1;
-      int outW = (inW - kernelSize) / stride + 1;
+      int outH = (inH + 2 * padding - kernelSize) / stride + 1;
+      int outW = (inW + 2 * padding - kernelSize) / stride + 1;
       outputShape = shape3(inC, outH, outW);
       a = new JtTensor3(inC, outH, outW);
       ar = new JtTensor3(inC, outH, outW);
@@ -260,17 +260,17 @@ public class JtLayers {
       var out = training ? a : ar;
       int inH = input.shape[1], inW = input.shape[2];
       int outH = out.shape[1], outW = out.shape[2];
-      int k = kernelSize, s = stride;
+      int k = kernelSize, s = stride, p = padding;
       for (int c = 0; c < input.shape[0]; c++) {
         for (int oh = 0; oh < outH; oh++) {
           for (int ow = 0; ow < outW; ow++) {
             float max = Float.NEGATIVE_INFINITY;
             for (int kh = 0; kh < k; kh++) {
-              int ih = oh * s + kh;
-              if (ih >= inH) continue;
+              int ih = oh * s + kh - p;
+              if (ih < 0 || ih >= inH) continue;
               for (int kw = 0; kw < k; kw++) {
-                int iw = ow * s + kw;
-                if (iw >= inW) continue;
+                int iw = ow * s + kw - p;
+                if (iw < 0 || iw >= inW) continue;
                 float val = input.get(c, ih, iw);
                 if (val > max) max = val;
               }
