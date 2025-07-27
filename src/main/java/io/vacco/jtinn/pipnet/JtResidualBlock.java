@@ -6,9 +6,9 @@ public class JtResidualBlock extends JtLayers.JtLayer3 {
 
   private static final long serialVersionUID = JtUtil.version;
 
-  public JtLayers.JtConvLayer3 conv1, conv2;
+  public JtLayers.JtConvLayer3      conv1, conv2;
   public JtLayers.JtBatchNormLayer3 bn1, bn2;
-  public JtProjectionLayer shortcut;
+  public JtProjectionLayer          shortcut;
 
   public JtResidualBlock init(int inChannels, int outChannels, int stride) {
     this.conv1 = new JtLayers.JtConvLayer3().init(outChannels, 3, stride, 1, null);

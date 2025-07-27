@@ -7,7 +7,6 @@ public class JtProjectionLayer extends JtLayers.JtLayer3 {
   private static final long serialVersionUID = JtUtil.version;
 
   public JtLayers.JtConvLayer3 conv;
-
   public JtLayers.JtBatchNormLayer3 bn;
 
   public JtProjectionLayer init(int inChannels, int outChannels, int stride) {
@@ -36,7 +35,7 @@ public class JtProjectionLayer extends JtLayers.JtLayer3 {
   }
 
   @Override public JtTensor3 forward(JtTensor3 input, boolean training) {
-    JtTensor3 x = conv.forward(input, training);
+    var x = conv.forward(input, training);
     x = bn.forward(x, training);
     return x;
   }
