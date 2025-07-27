@@ -235,4 +235,52 @@ public class JtLayers {
     }
   }
 
+  public static class JtMaxPoolLayer3 extends JtLayer3 {
+    private static final long serialVersionUID = JtUtil.version;
+
+    public int kernelSize = 2, stride = 2;
+
+    public JtMaxPoolLayer3 init(int kernelSize, int stride) {
+      this.kernelSize = kernelSize;
+      this.stride = stride;
+      return this;
+    }
+
+    public void calculateOutputShape(int[] inputShape) {
+      int inC = inputShape[0], inH = inputShape[1], inW = inputShape[2];
+      int outH = (inH - kernelSize) / stride + 1;
+      int outW = (inW - kernelSize) / stride + 1;
+      outputShape = shape3(inC, outH, outW);
+      a = new JtTensor3(inC, outH, outW);
+      ar = new JtTensor3(inC, outH, outW);
+      δ = new JtTensor3(inC, outH, outW);
+    }
+
+    @Override public JtTensor3 forward(JtTensor3 input, boolean training) {
+      var out = training ? a : ar;
+      int inH = input.shape[1], inW = input.shape[2];
+      int outH = out.shape[1], outW = out.shape[2];
+      int k = kernelSize, s = stride;
+      for (int c = 0; c < input.shape[0]; c++) {
+        for (int oh = 0; oh < outH; oh++) {
+          for (int ow = 0; ow < outW; ow++) {
+            float max = Float.NEGATIVE_INFINITY;
+            for (int kh = 0; kh < k; kh++) {
+              int ih = oh * s + kh;
+              if (ih >= inH) continue;
+              for (int kw = 0; kw < k; kw++) {
+                int iw = ow * s + kw;
+                if (iw >= inW) continue;
+                float val = input.get(c, ih, iw);
+                if (val > max) max = val;
+              }
+            }
+            out.set(c, oh, ow, max);
+          }
+        }
+      }
+      return out;
+    }
+  }
+
 }

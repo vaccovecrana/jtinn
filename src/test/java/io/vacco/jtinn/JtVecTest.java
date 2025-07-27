@@ -10,10 +10,10 @@ import static j8spec.J8Spec.*;
 public class JtVecTest {
   static {
     it("Can perform AVX float matrix multiplication", () -> {
-      float[] in = new float[8];
-      float[][] w = new float[8][8];
-      float[] b = new float[8];
-      float[] out = new float[8];
+      var in  = new float[8];
+      var w   = new float[8][8];
+      var b   = new float[8];
+      var out = new float[8];
       for (int i = 0; i < 8; i++) {
         in[i] = i + 1;
         b[i] = 0;
@@ -30,10 +30,10 @@ public class JtVecTest {
     });
 
     it("Can perform SSE int8 matrix multiplication", () -> {
-      byte[] in = new byte[16];
-      byte[][] w = new byte[16][16];
-      float[] b = new float[16];
-      float[] out = new float[16];
+      var in  = new byte[16];
+      var w   = new byte[16][16];
+      var b   = new float[16];
+      var out = new float[16];
       for (int i = 0; i < 16; i++) {
         in[i] = (byte) (i + 1);
         b[i] = 0;

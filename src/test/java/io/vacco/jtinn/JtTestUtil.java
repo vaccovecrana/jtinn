@@ -28,7 +28,7 @@ public class JtTestUtil {
     if (t == null || t.data == null || t.shape == null || t.shape.length != 3) {
       return "[Invalid or empty tensor]";
     }
-    StringBuilder sb = new StringBuilder();
+    var sb = new StringBuilder();
     for (int c = 0; c < t.shape[0]; c++) {
       sb.append("Channel ").append(c).append(":\n");
       for (int h = 0; h < t.shape[1]; h++) {
