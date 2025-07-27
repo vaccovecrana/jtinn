@@ -14,7 +14,7 @@ import static org.junit.Assert.*;
 @RunWith(J8SpecRunner.class)
 public class JtResNet18Test {
 
-  // See etc/pipnet-test/pipnet-data.py
+  // See etc/pipnet-test/resnet18-data.py
   private static final float[] pytorchOutput = new float[512];
 
   static {
