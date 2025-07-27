@@ -6,3 +6,5 @@ gradlew*
 .DS_Store
 
 build/
+
+etc/pipnet-test/torch/
