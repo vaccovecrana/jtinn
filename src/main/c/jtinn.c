@@ -28,12 +28,17 @@ JNIEXPORT void JNICALL Java_io_vacco_jtinn_JtVec_avxFloatMatMul(
 
   for (jint j = 0; j < outSize; j++) {
     __m256 acc = _mm256_setzero_ps();
-    for (jint a = 0; a < inSize; a += 8) {
+    jint a;
+    for (a = 0; a + 8 <= inSize; a += 8) {
       __m256 inVec = _mm256_loadu_ps(&inPtr[a]);
       __m256 wVec = _mm256_loadu_ps(&wPtr[j][a]);
       acc = _mm256_fmadd_ps(inVec, wVec, acc);
     }
-    float z = hsum256_ps(acc) + bPtr[j];
+    float sum = hsum256_ps(acc);
+    for (; a < inSize; a++) {
+      sum += inPtr[a] * wPtr[j][a];
+    }
+    float z = sum + bPtr[j];
     outPtr[j] = z;
   }
 
@@ -72,7 +77,8 @@ JNIEXPORT void JNICALL Java_io_vacco_jtinn_JtVec_sseInt8MatMul(
   for (jint j = 0; j < outSize; j++) {
     __m128i acc_low = _mm_setzero_si128();
     __m128i acc_high = _mm_setzero_si128();
-    for (jint a = 0; a < inSize; a += 16) {
+    jint a;
+    for (a = 0; a + 16 <= inSize; a += 16) {
       __m128i inVec = _mm_loadu_si128((__m128i *)&inPtr[a]);
       __m128i wVec = _mm_loadu_si128((__m128i *)&wPtr[j][a]);
       __m128i madd = _mm_maddubs_epi16(inVec, wVec);
@@ -83,6 +89,9 @@ JNIEXPORT void JNICALL Java_io_vacco_jtinn_JtVec_sseInt8MatMul(
     }
     __m128i acc = _mm_add_epi32(acc_low, acc_high);
     int sum = hsum128_epi32(acc);
+    for (; a < inSize; a++) {
+      sum += (int)inPtr[a] * (int)wPtr[j][a];
+    }
     float z = sum * scale + bPtr[j];
     outPtr[j] = z;
   }
