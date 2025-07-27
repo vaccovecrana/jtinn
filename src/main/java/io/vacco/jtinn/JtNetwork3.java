@@ -35,26 +35,6 @@ public class JtNetwork3 implements Serializable {
     return this;
   }
 
-  private void activate(JtTensor3 in, boolean update, JtLayers.JtLayer3 l) {
-    var out = update ? l.a : l.ar;
-    if (!update) { out.copyFrom(l.a); }
-    int outSize = l.size();
-    int inSize = l.weightSize();
-    if (inSize >= 8) {
-      JtVec.avxFloatMatMul(in.data, l.w, l.b, out.data, inSize, outSize);
-    } else {
-      float z;
-      for (int j = 0; j < outSize; j++) {
-        z = l.b[j];
-        for (int a = 0; a < inSize; a++) {
-          z += in.data[a] * l.w[j][a];
-        }
-        out.data[j] = z;
-      }
-    }
-    l.applyActivation(out, out);
-  }
-
   private JtTensor3 forward(JtTensor3 in, boolean update) {
     var current = in;
     for (var l : layers) {

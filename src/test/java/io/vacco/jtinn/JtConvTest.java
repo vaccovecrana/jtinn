@@ -57,15 +57,15 @@ public class JtConvTest {
       var out = cl.forward(input, false);
       assertEquals(3, out.shape[1]);
       assertEquals(3, out.shape[2]);
-      assertEquals(16.0, out.get(0, 0, 0), 0.01);
-      assertEquals(33.0, out.get(0, 0, 1), 0.01);
-      assertEquals(28.0, out.get(0, 0, 2), 0.01);
-      assertEquals(69.0, out.get(0, 1, 0), 0.01);
+      assertEquals(16.0,  out.get(0, 0, 0), 0.01);
+      assertEquals(33.0,  out.get(0, 0, 1), 0.01);
+      assertEquals(28.0,  out.get(0, 0, 2), 0.01);
+      assertEquals(69.0,  out.get(0, 1, 0), 0.01);
       assertEquals(117.0, out.get(0, 1, 1), 0.01);
-      assertEquals(87.0, out.get(0, 1, 2), 0.01);
-      assertEquals(76.0, out.get(0, 2, 0), 0.01);
+      assertEquals(87.0,  out.get(0, 1, 2), 0.01);
+      assertEquals(76.0,  out.get(0, 2, 0), 0.01);
       assertEquals(123.0, out.get(0, 2, 1), 0.01);
-      assertEquals(88.0, out.get(0, 2, 2), 0.01);
+      assertEquals(88.0,  out.get(0, 2, 2), 0.01);
     });
 
     it("Can apply activation after convolution", () -> {
