@@ -1,14 +1,16 @@
 package io.vacco.jtinn;
 
+import java.io.*;
 import java.util.Random;
 
 public class JtInit {
 
-  public interface JtParamInitializer {
+  public interface JtParamInitializer extends Serializable {
     void apply(JtLayers.JtLayer3 layer);
   }
 
   public static class JtRandomInitializer implements JtParamInitializer {
+    private static final long serialVersionUID = JtUtil.version;
 
     public long seed;
     private transient Random r;
@@ -19,7 +21,10 @@ public class JtInit {
       return this;
     }
 
-    @Override public void apply(JtLayers.JtLayer3 layer) {
+    public void apply(JtLayers.JtLayer3 layer) {
+      if (r == null) {
+        r = new Random(seed);
+      }
       for (int i = 0; i < layer.b.length; i++) {
         layer.b[i] = r.nextFloat() - 0.5f;
       }
@@ -29,7 +34,23 @@ public class JtInit {
             layer.w[k][j] = r.nextFloat() - 0.5f;
           }
         }
+      } else if (layer instanceof JtLayers.JtConvLayer3) {
+        var cl = (JtLayers.JtConvLayer3) layer;
+        for (int oc = 0; oc < cl.outputShape[0]; oc++) {
+          for (int ic = 0; ic < cl.inChannels; ic++) {
+            for (int kh = 0; kh < cl.kernelSize; kh++) {
+              for (int kw = 0; kw < cl.kernelSize; kw++) {
+                cl.weights[oc][ic][kh][kw] = r.nextFloat() - 0.5f;
+              }
+            }
+          }
+        }
       }
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+      in.defaultReadObject();
+      r = new Random(seed);
     }
   }
 

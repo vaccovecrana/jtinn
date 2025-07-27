@@ -24,4 +24,22 @@ public class JtTestUtil {
     );
   }
 
+  public static String tensorToString(JtTensor3 t) {
+    return tensorToString(t, "%.02f");
+  }
+
+  public static String tensorToString(JtTensor3 t, String format) {
+    StringBuilder sb = new StringBuilder();
+    for (int c = 0; c < t.shape[0]; c++) {
+      sb.append("Channel ").append(c).append(":\n");
+      for (int h = 0; h < t.shape[1]; h++) {
+        for (int w = 0; w < t.shape[2]; w++) {
+          sb.append(String.format(format, t.get(c, h, w))).append(" ");
+        }
+        sb.append("\n");
+      }
+    }
+    return sb.toString();
+  }
+
 }

@@ -2,6 +2,8 @@ package io.vacco.jtinn;
 
 import java.io.Serializable;
 
+import static io.vacco.jtinn.JtUtil.*;
+
 public class JtNetwork3 implements Serializable {
 
   private static final long serialVersionUID = JtUtil.version;
@@ -10,19 +12,26 @@ public class JtNetwork3 implements Serializable {
   public JtUpdate.JtUpdater updater;
 
   public JtNetwork3 init(int c, int h, int w, JtInit.JtParamInitializer paramInitializer,
-                         JtUpdate.JtUpdater updater, JtLayers.JtLayer3... layerSpec) {
-    this.layers = layerSpec;
+                         JtUpdate.JtUpdater updater, JtLayers.JtLayer3 ... layers) {
+    this.layers = layers;
     this.updater = updater;
-    layerSpec[0].withWeights(JtUtil.product(c, h, w));
-    paramInitializer.apply(layerSpec[0]);
-
-    for (int k = 1; k < layerSpec.length; k++) {
-      var lk = layerSpec[k];
-      var lkm1 = layerSpec[k - 1];
-      lk.withWeights(lkm1.size());
-      paramInitializer.apply(lk);
+    var currentShape = shape3(c, h, w);
+    for (var l : layers) {
+      if (l instanceof JtLayers.JtConvLayer3) {
+        var cl = (JtLayers.JtConvLayer3) l;
+        cl.inChannels = currentShape[0];
+        cl.calculateOutputShape(currentShape);
+        cl.allocateParams();
+        paramInitializer.apply(l);
+        cl.flattenWeights();
+        currentShape = cl.outputShape;
+      } else {
+        int inSize = JtUtil.product(currentShape[0], currentShape[1], currentShape[2]);
+        l.withWeights(inSize);
+        paramInitializer.apply(l);
+        currentShape = l.outputShape;
+      }
     }
-
     return this;
   }
 
@@ -46,15 +55,16 @@ public class JtNetwork3 implements Serializable {
     l.applyActivation(out, out);
   }
 
-  private void forward(JtTensor3 in, boolean update) {
-    activate(in, update, layers[0]);
-    for (int i = 1; i < layers.length; i++) {
-      activate(update ? layers[i - 1].a : layers[i - 1].ar, update, layers[i]);
+  private JtTensor3 forward(JtTensor3 in, boolean update) {
+    var current = in;
+    for (var l : layers) {
+      current = l.forward(current, update);
     }
+    return current;
   }
 
   private void bp1(JtTensor3 target, JtLayers.JtOutputLayer3 l) {
-    JtUtil.checkTensor(target, l.a);
+    checkTensor(target, l.a);
     for (int j = 0; j < l.size(); j++) {
       var act = l.a.data[j];
       l.δ.data[j] = l.errFn.pd(act, target.data[j]) * l.actFn.pd(act);
@@ -85,7 +95,7 @@ public class JtNetwork3 implements Serializable {
 
   public float totalError(JtTensor3 out) {
     var ol = getOutput();
-    JtUtil.checkTensor(out, ol.a);
+    checkTensor(out, ol.a);
     float dt = 0;
     for (int j = 0; j < out.size(); j++) {
       dt += ol.errFn.of(ol.a.data[j], out.data[j]);
@@ -100,8 +110,7 @@ public class JtNetwork3 implements Serializable {
   }
 
   public JtTensor3 estimate(JtTensor3 in) {
-    forward(in, false);
-    return getOutput().ar;
+    return forward(in, false);
   }
 
   public JtLayers.JtOutputLayer3 getOutput() {
