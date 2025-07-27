@@ -8,7 +8,7 @@ import static j8spec.J8Spec.*;
 import static org.junit.Assert.*;
 
 @DefinedOrder
-// @RunWith(J8SpecRunner.class)
+@RunWith(J8SpecRunner.class)
 public class JtConvTest {
 
   static {
@@ -57,28 +57,15 @@ public class JtConvTest {
       var out = cl.forward(input, false);
       assertEquals(3, out.shape[1]);
       assertEquals(3, out.shape[2]);
-      // Manual calculation for sum filter with pad=1, stride=2 on 5x5 input (1-25 sequential)
-      // Expected for position (0,0): sum of padded 3x3 around (0,0)
-      // With pad, effective input 7x7 with zeros, but only non-zero contributions
-      assertEquals(12.0, out.get(0, 0, 0), 0.01); // positions 1,2,3,6,7,8,11,12,13 sum=72/9? Wait, no, since all 1, sum of values in patch
-      // Since all 1 weight, sum is sum of input in patch.
-      // For oh=0, ow=0, ih= -1,0,1 ; iw=-1,0,1
-      // Valid: (0,0),(0,1),(1,0),(1,1) =1,2,6,7 =16
-      // Wait, I set weight =1, not 1/9, for sum.
-      // Adjust test as needed for manual verify.
-      // Similarly for other positions.
-      // For example, (0,0): sum of input at (0,0),(0,1),(0,2),(1,0),(1,1),(1,2),(2,0),(2,1),(2,2) but with stride 2, wait no, patch is always 3x3, stride is step.
-      // For oh=0, ow=0, ih=0*2 + kh -1 = kh -1, for kh=0, ih=-1 (pad0), kh=1 ih=1, kh=2 ih=3? No.
-      // ih = oh * stride + kh - padding
-      // for oh=0, kh=0, ih = 0 +0 -1 = -1
-      // kh=1, ih=0 +1 -1 =0
-      // kh=2, ih=0 +2 -1 =1
-      // For str=2, patch starts at 'effective' position with step.
-      // To verify, use simple all 1 input, sum should be number of non-pad positions.
-      // But for accuracy, calculate manual for a test case.
-      // Also add assert for outH=3, as (5 -3 +2)/2 +1 = (4)/2 +1 =3
-      assertEquals(3, out.shape[1]);
-      // Add specific asserts based on manual calc.
+      assertEquals(16.0, out.get(0, 0, 0), 0.01);
+      assertEquals(33.0, out.get(0, 0, 1), 0.01);
+      assertEquals(28.0, out.get(0, 0, 2), 0.01);
+      assertEquals(69.0, out.get(0, 1, 0), 0.01);
+      assertEquals(117.0, out.get(0, 1, 1), 0.01);
+      assertEquals(87.0, out.get(0, 1, 2), 0.01);
+      assertEquals(76.0, out.get(0, 2, 0), 0.01);
+      assertEquals(123.0, out.get(0, 2, 1), 0.01);
+      assertEquals(88.0, out.get(0, 2, 2), 0.01);
     });
 
     it("Can apply activation after convolution", () -> {

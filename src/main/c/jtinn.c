@@ -17,7 +17,10 @@ JNIEXPORT void JNICALL Java_io_vacco_jtinn_JtVec_avxFloatMatMul(
     jint inSize, jint outSize
 ) {
   jfloat *inPtr = (*env)->GetPrimitiveArrayCritical(env, in, NULL);
-  jfloat *bPtr = (*env)->GetPrimitiveArrayCritical(env, b, NULL);
+  jfloat *bPtr = NULL;
+  if (b != NULL) {
+    bPtr = (*env)->GetPrimitiveArrayCritical(env, b, NULL);
+  }
   jfloat *outPtr = (*env)->GetPrimitiveArrayCritical(env, out, NULL);
 
   jfloat **wPtr = (jfloat **) malloc(outSize * sizeof(jfloat *));
@@ -38,7 +41,10 @@ JNIEXPORT void JNICALL Java_io_vacco_jtinn_JtVec_avxFloatMatMul(
     for (; a < inSize; a++) {
       sum += inPtr[a] * wPtr[j][a];
     }
-    float z = sum + bPtr[j];
+    float z = sum;
+    if (bPtr != NULL) {
+      z += bPtr[j];
+    }
     outPtr[j] = z;
   }
 
@@ -49,7 +55,9 @@ JNIEXPORT void JNICALL Java_io_vacco_jtinn_JtVec_avxFloatMatMul(
   free(wPtr);
 
   (*env)->ReleasePrimitiveArrayCritical(env, out, outPtr, 0);
-  (*env)->ReleasePrimitiveArrayCritical(env, b, bPtr, 0);
+  if (bPtr != NULL) {
+    (*env)->ReleasePrimitiveArrayCritical(env, b, bPtr, 0);
+  }
   (*env)->ReleasePrimitiveArrayCritical(env, in, inPtr, 0);
 }
 
@@ -65,7 +73,10 @@ JNIEXPORT void JNICALL Java_io_vacco_jtinn_JtVec_sseInt8MatMul(
     jint inSize, jint outSize, jfloat scale
 ) {
   jbyte *inPtr = (*env)->GetPrimitiveArrayCritical(env, in, NULL);
-  jfloat *bPtr = (*env)->GetPrimitiveArrayCritical(env, b, NULL);
+  jfloat *bPtr = NULL;
+  if (b != NULL) {
+    bPtr = (*env)->GetPrimitiveArrayCritical(env, b, NULL);
+  }
   jfloat *outPtr = (*env)->GetPrimitiveArrayCritical(env, out, NULL);
 
   jbyte **wPtr = (jbyte **) malloc(outSize * sizeof(jbyte *));
@@ -92,7 +103,10 @@ JNIEXPORT void JNICALL Java_io_vacco_jtinn_JtVec_sseInt8MatMul(
     for (; a < inSize; a++) {
       sum += (int)inPtr[a] * (int)wPtr[j][a];
     }
-    float z = sum * scale + bPtr[j];
+    float z = sum * scale;
+    if (bPtr != NULL) {
+      z += bPtr[j];
+    }
     outPtr[j] = z;
   }
 
@@ -103,6 +117,8 @@ JNIEXPORT void JNICALL Java_io_vacco_jtinn_JtVec_sseInt8MatMul(
   free(wPtr);
 
   (*env)->ReleasePrimitiveArrayCritical(env, out, outPtr, 0);
-  (*env)->ReleasePrimitiveArrayCritical(env, b, bPtr, 0);
+  if (bPtr != NULL) {
+    (*env)->ReleasePrimitiveArrayCritical(env, b, bPtr, 0);
+  }
   (*env)->ReleasePrimitiveArrayCritical(env, in, inPtr, 0);
 }

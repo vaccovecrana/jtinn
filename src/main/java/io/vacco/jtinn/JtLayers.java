@@ -60,7 +60,9 @@ public class JtLayers {
     public JtTensor3 forward(JtTensor3 input, boolean training) {
       var out = training ? a : ar;
       computeLinear(input, out);
-      applyActivation(out, out);
+      if (actFn != null) {
+        applyActivation(out, out);
+      }
       return out;
     }
 
