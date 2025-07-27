@@ -186,4 +186,53 @@ public class JtLayers {
     }
   }
 
+  public static class JtBatchNormLayer3 extends JtLayer3 {
+    private static final long serialVersionUID = JtUtil.version;
+
+    public float[] gamma, beta, runningMean, runningVar;
+    public float epsilon = 1e-5f;
+
+    public JtBatchNormLayer3 init(JtActivation.JtActivationFn actFn) {
+      this.actFn = actFn;
+      return this;
+    }
+
+    public void calculateOutputShape(int[] inputShape) {
+      this.outputShape = inputShape.clone();
+      this.a = new JtTensor3(outputShape[0], outputShape[1], outputShape[2]);
+      this.ar = new JtTensor3(outputShape[0], outputShape[1], outputShape[2]);
+      this.δ = new JtTensor3(outputShape[0], outputShape[1], outputShape[2]);
+    }
+
+    public void allocateParams() {
+      int channels = outputShape[0];
+      gamma = new float[channels];
+      beta = new float[channels];
+      runningMean = new float[channels];
+      runningVar = new float[channels];
+    }
+
+    @Override public JtTensor3 forward(JtTensor3 input, boolean training) {
+      var out = training ? a : ar;
+      int channels = outputShape[0], height = outputShape[1], width = outputShape[2];
+      for (int c = 0; c < channels; c++) {
+        float mean = runningMean[c];
+        float std = (float) Math.sqrt(runningVar[c] + epsilon);
+        float g = gamma[c];
+        float b = beta[c];
+        for (int h = 0; h < height; h++) {
+          for (int w = 0; w < width; w++) {
+            float val = input.get(c, h, w);
+            float norm = (val - mean) / std;
+            out.set(c, h, w, g * norm + b);
+          }
+        }
+      }
+      if (actFn != null) {
+        applyActivation(out, out);
+      }
+      return out;
+    }
+  }
+
 }

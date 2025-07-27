@@ -25,6 +25,9 @@ public class JtTestUtil {
   }
 
   public static String tensorToString(JtTensor3 t, String format) {
+    if (t == null || t.data == null || t.shape == null || t.shape.length != 3) {
+      return "[Invalid or empty tensor]";
+    }
     StringBuilder sb = new StringBuilder();
     for (int c = 0; c < t.shape[0]; c++) {
       sb.append("Channel ").append(c).append(":\n");

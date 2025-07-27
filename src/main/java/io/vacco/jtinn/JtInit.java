@@ -1,6 +1,7 @@
 package io.vacco.jtinn;
 
 import java.io.*;
+import java.util.Arrays;
 import java.util.Random;
 
 public class JtInit {
@@ -45,6 +46,12 @@ public class JtInit {
             }
           }
         }
+      } else if (layer instanceof JtLayers.JtBatchNormLayer3) {
+        var bn = (JtLayers.JtBatchNormLayer3) layer;
+        Arrays.fill(bn.gamma, 1.0f);
+        Arrays.fill(bn.beta, 0.0f);
+        Arrays.fill(bn.runningMean, 0.0f);
+        Arrays.fill(bn.runningVar, 1.0f);
       }
     }
 

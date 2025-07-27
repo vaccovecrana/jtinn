@@ -25,6 +25,12 @@ public class JtNetwork3 implements Serializable {
         paramInitializer.apply(l);
         cl.flattenWeights();
         currentShape = cl.outputShape;
+      } else if (l instanceof JtLayers.JtBatchNormLayer3) {
+        var bn = (JtLayers.JtBatchNormLayer3) l;
+        bn.calculateOutputShape(currentShape);
+        bn.allocateParams();
+        paramInitializer.apply(l);
+        currentShape = bn.outputShape;
       } else {
         int inSize = JtUtil.product(currentShape[0], currentShape[1], currentShape[2]);
         l.withWeights(inSize);
@@ -85,8 +91,8 @@ public class JtNetwork3 implements Serializable {
 
   public float train(JtTensor3 in, JtTensor3 out) {
     for (JtLayers.JtLayer3 l : layers) {
-      if (l instanceof JtLayers.JtConvLayer3) {
-        throw new UnsupportedOperationException("Training not supported for convolutional layers");
+      if (l instanceof JtLayers.JtConvLayer3 || l instanceof JtLayers.JtBatchNormLayer3) {
+        throw new UnsupportedOperationException("Training not supported for convolutional or batch norm layers");
       }
     }
     forward(in, true);
