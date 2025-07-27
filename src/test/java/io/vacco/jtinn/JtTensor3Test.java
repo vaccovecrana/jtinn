@@ -26,6 +26,8 @@ public class JtTensor3Test {
       if (tr.size() != 24 || tr.shape[0] != 1 || tr.shape[1] != 1 || tr.shape[2] != 24) {
         throw new AssertionError("Reshape failed");
       }
+      System.out.println(JtTestUtil.tensorToString(t));
+      System.out.println(JtTestUtil.tensorToString(tc));
     });
   }
 

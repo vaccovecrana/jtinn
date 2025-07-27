@@ -24,10 +24,6 @@ public class JtTestUtil {
     );
   }
 
-  public static String tensorToString(JtTensor3 t) {
-    return tensorToString(t, "%.02f");
-  }
-
   public static String tensorToString(JtTensor3 t, String format) {
     StringBuilder sb = new StringBuilder();
     for (int c = 0; c < t.shape[0]; c++) {
@@ -40,6 +36,10 @@ public class JtTestUtil {
       }
     }
     return sb.toString();
+  }
+
+  public static String tensorToString(JtTensor3 t) {
+    return tensorToString(t, "%08.3f");
   }
 
 }

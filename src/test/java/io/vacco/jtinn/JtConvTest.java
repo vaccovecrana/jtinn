@@ -27,6 +27,7 @@ public class JtConvTest {
       cl.flattenWeights();
       var input = new JtTensor3(1, 5, 5);
       input.fill(1.0f);
+      System.out.println(JtTestUtil.tensorToString(input));
       var out = cl.forward(input, false);
       assertEquals(3, out.shape[1]);
       assertEquals(3, out.shape[2]);
@@ -54,6 +55,7 @@ public class JtConvTest {
       for (int i = 0; i < 25; i++) {
         input.data[i] = i + 1;
       }
+      System.out.println(JtTestUtil.tensorToString(input));
       var out = cl.forward(input, false);
       assertEquals(3, out.shape[1]);
       assertEquals(3, out.shape[2]);
@@ -79,6 +81,7 @@ public class JtConvTest {
       cl.flattenWeights();
       var input = new JtTensor3(1, 3, 3);
       input.data = new float[]{-1, 0, 1, -2, 3, -4, 5, -6, 7};
+      System.out.println(JtTestUtil.tensorToString(input));
       var out = cl.forward(input, false);
       float[] expected = new float[]{0, 0, 1, 0, 3, 0, 5, 0, 7};
       assertArrayEquals(expected, out.data, 0.01f);

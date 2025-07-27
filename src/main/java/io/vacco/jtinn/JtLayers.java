@@ -92,6 +92,7 @@ public class JtLayers {
 
   public static class JtOutputLayer3 extends JtLayer3 {
     private static final long serialVersionUID = JtUtil.version;
+
     public JtError.JtErrorFn errFn;
 
     public JtOutputLayer3 init(int c, int h, int w, JtActivation.JtActivationFn actFn) {
@@ -106,6 +107,7 @@ public class JtLayers {
 
   public static class JtConvLayer3 extends JtLayer3 {
     private static final long serialVersionUID = JtUtil.version;
+
     public float[][][][] weights;
     public float[][] wFlat;
     public int kernelSize, stride, padding, inChannels;
