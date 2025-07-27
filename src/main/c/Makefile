@@ -8,8 +8,8 @@ ifeq ($(UNAME_S),Linux)
     SOEXT=so
     SOFLAGS=-shared -fPIC
     TARGET_FLAG=-target x86_64-linux-gnu
-    LDFLAGS += -s  # Strip symbols (equivalent to --strip-all)
-    CFLAGS += -Os  # Optimize for size
+    LDFLAGS += -s  # Strip symbols
+    CFLAGS += -Os -mavx -mfma
 endif
 ifeq ($(UNAME_S),Darwin)
     PLATFORM=darwin
