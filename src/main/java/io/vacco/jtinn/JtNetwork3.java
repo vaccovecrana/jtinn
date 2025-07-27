@@ -43,9 +43,7 @@ public class JtNetwork3 implements Serializable {
         out.data[j] = z;
       }
     }
-    for (int j = 0; j < outSize; j++) {
-      out.data[j] = l.actFn.apply(out.data[j]);
-    }
+    l.applyActivation(out, out);
   }
 
   private void forward(JtTensor3 in, boolean update) {
