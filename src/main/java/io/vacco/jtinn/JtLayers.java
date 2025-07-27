@@ -42,6 +42,13 @@ public class JtLayers {
     public int size() { return a == null ? 0 : a.size(); }
     public int weightSize() { return w == null ? 0 : w[0].length; }
 
+    public void applyActivation(JtTensor3 input, JtTensor3 output) {
+      JtUtil.checkTensor(input, output);
+      for (int i = 0; i < input.size(); i++) {
+        output.data[i] = actFn.apply(input.data[i]);
+      }
+    }
+
     @Override public String toString() {
       return String.format(
         "ly[prm: %s, act: %s]",

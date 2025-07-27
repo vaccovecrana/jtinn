@@ -10,7 +10,6 @@ public class JtActivation {
   }
 
   public static class JtLeakyRelu implements JtActivationFn {
-
     private static final long serialVersionUID = JtUtil.version;
     public float α;
 
@@ -29,7 +28,6 @@ public class JtActivation {
   }
 
   public static class JtSigmoid implements JtActivationFn {
-
     private static final long serialVersionUID = JtUtil.version;
 
     @Override public float apply(float z) {
@@ -38,6 +36,18 @@ public class JtActivation {
 
     @Override public float pd(float z) {
       return z * (1.0f - z);
+    }
+  }
+
+  public static class JtRelu implements JtActivationFn {
+    private static final long serialVersionUID = JtUtil.version;
+
+    @Override public float apply(float z) {
+      return Math.max(0, z);
+    }
+
+    @Override public float pd(float z) {
+      return z > 0 ? 1 : 0;
     }
   }
 
