@@ -1,5 +1,7 @@
 package io.vacco.jtinn;
 
+import io.vacco.jtinn.core.JtTensor3;
+
 import java.util.Arrays;
 
 public class JtTestUtil {

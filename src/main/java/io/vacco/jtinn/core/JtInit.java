@@ -1,5 +1,6 @@
-package io.vacco.jtinn;
+package io.vacco.jtinn.core;
 
+import io.vacco.jtinn.pipnet.JtResidualBlock;
 import java.io.*;
 import java.util.Arrays;
 import java.util.Random;
@@ -26,17 +27,8 @@ public class JtInit {
       if (r == null) {
         r = new Random(seed);
       }
-      for (int i = 0; i < layer.b.length; i++) {
-        layer.b[i] = r.nextFloat() - 0.5f;
-      }
-      if (layer.w != null) {
-        for (int k = 0; k < layer.w.length; k++) {
-          for (int j = 0; j < layer.w[k].length; j++) {
-            layer.w[k][j] = r.nextFloat() - 0.5f;
-          }
-        }
-      } else if (layer instanceof JtLayers.JtConvLayer3) {
-        var cl = (JtLayers.JtConvLayer3) layer;
+      if (layer instanceof JtLayers.JtConvLayer3) {
+        JtLayers.JtConvLayer3 cl = (JtLayers.JtConvLayer3) layer;
         for (int oc = 0; oc < cl.outputShape[0]; oc++) {
           for (int ic = 0; ic < cl.inChannels; ic++) {
             for (int kh = 0; kh < cl.kernelSize; kh++) {
@@ -47,11 +39,32 @@ public class JtInit {
           }
         }
       } else if (layer instanceof JtLayers.JtBatchNormLayer3) {
-        var bn = (JtLayers.JtBatchNormLayer3) layer;
+        JtLayers.JtBatchNormLayer3 bn = (JtLayers.JtBatchNormLayer3) layer;
         Arrays.fill(bn.gamma, 1.0f);
         Arrays.fill(bn.beta, 0.0f);
         Arrays.fill(bn.runningMean, 0.0f);
         Arrays.fill(bn.runningVar, 1.0f);
+      } else if (layer instanceof JtResidualBlock) {
+        JtResidualBlock rb = (JtResidualBlock) layer;
+        apply(rb.conv1);
+        apply(rb.bn1);
+        apply(rb.conv2);
+        apply(rb.bn2);
+        if (rb.shortcut != null) {
+          apply(rb.shortcut.conv);
+          apply(rb.shortcut.bn);
+        }
+      } else {
+        for (int i = 0; i < layer.b.length; i++) {
+          layer.b[i] = r.nextFloat() - 0.5f;
+        }
+        if (layer.w != null) {
+          for (int k = 0; k < layer.w.length; k++) {
+            for (int j = 0; j < layer.w[k].length; j++) {
+              layer.w[k][j] = r.nextFloat() - 0.5f;
+            }
+          }
+        }
       }
     }
 

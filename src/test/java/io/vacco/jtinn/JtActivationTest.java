@@ -1,5 +1,8 @@
 package io.vacco.jtinn;
 
+import io.vacco.jtinn.core.JtActivation;
+import io.vacco.jtinn.core.JtLayers;
+import io.vacco.jtinn.core.JtTensor3;
 import j8spec.annotation.DefinedOrder;
 import j8spec.junit.J8SpecRunner;
 import org.junit.runner.RunWith;

@@ -1,4 +1,4 @@
-package io.vacco.jtinn;
+package io.vacco.jtinn.core;
 
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;

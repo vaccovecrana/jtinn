@@ -1,5 +1,6 @@
 package io.vacco.jtinn;
 
+import io.vacco.jtinn.core.*;
 import j8spec.annotation.DefinedOrder;
 import j8spec.junit.J8SpecRunner;
 import org.junit.runner.RunWith;

@@ -11,7 +11,7 @@ static float hsum256_ps(__m256 v) {
   return _mm_cvtss_f32(vsum);
 }
 
-JNIEXPORT void JNICALL Java_io_vacco_jtinn_JtVec_avxFloatMatMul(
+JNIEXPORT void JNICALL Java_io_vacco_jtinn_core_JtVec_avxFloatMatMul(
     JNIEnv *env, jclass cls,
     jfloatArray in, jobjectArray w, jfloatArray b, jfloatArray out,
     jint inSize, jint outSize
@@ -67,7 +67,7 @@ static int hsum128_epi32(__m128i v) {
   return _mm_cvtsi128_si32(h2);
 }
 
-JNIEXPORT void JNICALL Java_io_vacco_jtinn_JtVec_sseInt8MatMul(
+JNIEXPORT void JNICALL Java_io_vacco_jtinn_core_JtVec_sseInt8MatMul(
     JNIEnv *env, jclass cls,
     jbyteArray in, jobjectArray w, jfloatArray b, jfloatArray out,
     jint inSize, jint outSize, jfloat scale

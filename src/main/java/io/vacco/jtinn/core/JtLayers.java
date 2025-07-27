@@ -1,9 +1,9 @@
-package io.vacco.jtinn;
+package io.vacco.jtinn.core;
 
 import java.io.Serializable;
 import java.util.Arrays;
 
-import static io.vacco.jtinn.JtUtil.shape3;
+import static io.vacco.jtinn.core.JtUtil.shape3;
 
 public class JtLayers {
 

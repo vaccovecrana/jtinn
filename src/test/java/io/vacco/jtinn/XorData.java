@@ -1,5 +1,8 @@
 package io.vacco.jtinn;
 
+import io.vacco.jtinn.core.JtTensor3;
+import io.vacco.jtinn.core.JtTrain;
+
 import java.util.*;
 
 class XorData implements JtTrain.JtSampler {

@@ -1,8 +1,10 @@
-package io.vacco.jtinn;
+package io.vacco.jtinn.core;
+
+import io.vacco.jtinn.pipnet.JtResidualBlock;
 
 import java.io.Serializable;
 
-import static io.vacco.jtinn.JtUtil.*;
+import static io.vacco.jtinn.core.JtUtil.*;
 
 public class JtNetwork3 implements Serializable {
 
@@ -35,6 +37,13 @@ public class JtNetwork3 implements Serializable {
         var mpl = (JtLayers.JtMaxPoolLayer3) l;
         mpl.calculateOutputShape(currentShape);
         currentShape = mpl.outputShape;
+      } else if (l instanceof JtResidualBlock) {
+        var rb = (JtResidualBlock) l;
+        rb.calculateOutputShape(currentShape);
+        rb.allocateParams();
+        paramInitializer.apply(l);
+        rb.flattenWeights();
+        currentShape = rb.outputShape;
       } else {
         int inSize = JtUtil.product(currentShape[0], currentShape[1], currentShape[2]);
         l.withWeights(inSize);

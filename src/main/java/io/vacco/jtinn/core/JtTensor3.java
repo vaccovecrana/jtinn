@@ -1,9 +1,9 @@
-package io.vacco.jtinn;
+package io.vacco.jtinn.core;
 
 import java.io.Serializable;
 import java.util.Arrays;
 
-import static io.vacco.jtinn.JtUtil.*;
+import static io.vacco.jtinn.core.JtUtil.*;
 
 public class JtTensor3 implements Serializable {
 
@@ -51,6 +51,13 @@ public class JtTensor3 implements Serializable {
     }
     this.shape = shape3(c, h, w);
     return this;
+  }
+
+  public void add(JtTensor3 other) {
+    JtUtil.checkTensor(this, other);
+    for (int i = 0; i < data.length; i++) {
+      data[i] += other.data[i];
+    }
   }
 
 }
