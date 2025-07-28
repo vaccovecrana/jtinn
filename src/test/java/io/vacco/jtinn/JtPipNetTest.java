@@ -66,7 +66,8 @@ public class JtPipNetTest {
       Arrays.fill(pixels, 127.0f);
       var lms = pip.detectLandmarks(pixels, 512, 512);
       assertEquals(N, lms.size());
-      float[] lm = lms.get(0);
+      var lm = lms.get(0);
+      System.out.println(Arrays.toString(lm));
       assertTrue(lm != null && lm.length == 2);
       assertTrue(lm[0] >= 0 && lm[0] <= 512 && lm[1] >= 0 && lm[1] <= 512);
     });
