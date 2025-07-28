@@ -6,9 +6,9 @@ import java.util.*;
 public class JtResNet18 extends JtNetwork3 {
 
   public JtResNet18 init(int inputH, int inputW, JtInit.JtParamInitializer initializer) {
-    var relu = new JtActivation.JtRelu();
+    var relu     = new JtActivation.JtRelu();
     var stemConv = new JtLayers.JtConvLayer3().init(64, 7, 2, 3, null);
-    var stemBn = new JtLayers.JtBatchNormLayer3().init(relu);
+    var stemBn   = new JtLayers.JtBatchNormLayer3().init(relu);
     var stemPool = new JtLayers.JtMaxPoolLayer3().init(3, 2);
     stemPool.padding = 1;
 
