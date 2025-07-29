@@ -7,4 +7,5 @@ gradlew*
 
 build/
 
-etc/resnet-test/torch/
+etc/tools/torch/
+etc/tools/models/

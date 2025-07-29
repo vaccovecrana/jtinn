@@ -5,6 +5,8 @@ import java.util.*;
 
 public class JtResNet18 extends JtNetwork3 {
 
+  private static final long serialVersionUID = JtUtil.version;
+
   public JtResNet18 init(int inputH, int inputW, JtInit.JtParamInitializer initializer) {
     var relu     = new JtActivation.JtRelu();
     var stemConv = new JtLayers.JtConvLayer3().init(64, 7, 2, 3, null);

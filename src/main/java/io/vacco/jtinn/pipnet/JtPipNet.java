@@ -12,8 +12,7 @@ public class JtPipNet extends JtNetwork3 {
 
   private final int numLandmarks, numNeighbors;
   private int[][] neighborIndices;
-
-  public JtPipNet(int numLandmarks) { this(numLandmarks, 10); }
+  public  JtLayers.JtConvLayer3 clsLayer, xLayer, yLayer, nbXLayer, nbYLayer;
 
   public JtPipNet(int numLandmarks, int numNeighbors) {
     this.numLandmarks = numLandmarks;
@@ -30,12 +29,72 @@ public class JtPipNet extends JtNetwork3 {
 
   public JtPipNet init(JtInit.JtParamInitializer initializer) {
     var backbone = new JtResNet18().init(256, 256, initializer);
-    int headCh = numLandmarks + 2 * numLandmarks + 2 * numNeighbors * numLandmarks;
-    var head = new JtLayers.JtConvLayer3().init(headCh, 1, 1, 0, null);
+    clsLayer = new JtLayers.JtConvLayer3().init(numLandmarks, 1, 1, 0, null);
+    xLayer   = new JtLayers.JtConvLayer3().init(numLandmarks, 1, 1, 0, null);
+    yLayer   = new JtLayers.JtConvLayer3().init(numLandmarks, 1, 1, 0, null);
+    nbXLayer = new JtLayers.JtConvLayer3().init(numLandmarks * numNeighbors, 1, 1, 0, null);
+    nbYLayer = new JtLayers.JtConvLayer3().init(numLandmarks * numNeighbors, 1, 1, 0, null);
     var allLayers = new ArrayList<>(Arrays.asList(backbone.layers));
-    allLayers.add(head);
+    allLayers.add(clsLayer);
+    allLayers.add(xLayer);
+    allLayers.add(yLayer);
+    allLayers.add(nbXLayer);
+    allLayers.add(nbYLayer);
     super.init(3, 256, 256, initializer, null, allLayers.toArray(new JtLayers.JtLayer3[0]));
     return this;
+  }
+
+  @Override public JtTensor3 estimate(JtTensor3 input) {
+    var x = input;
+    for (int i = 0; i < layers.length - 5; i++) {
+      x = layers[i].forward(x, false);
+    }
+    // Compute head outputs
+    var clsOut = clsLayer.forward(x, false);
+    var xOut   = xLayer.forward(x, false);
+    var yOut   = yLayer.forward(x, false);
+    var nbXOut = nbXLayer.forward(x, false);
+    var nbYOut = nbYLayer.forward(x, false);
+    // Concatenate: [cls(N), x(N), y(N), nb_x(N*numNeighbors), nb_y(N*numNeighbors)]
+    int totalC = numLandmarks + 2 * numLandmarks + 2 * numNeighbors * numLandmarks;
+    var maps = new JtTensor3(totalC, 8, 8);
+    int idx = 0;
+    for (int c = 0; c < numLandmarks; c++) {
+      for (int h = 0; h < 8; h++) {
+        for (int w = 0; w < 8; w++) {
+          maps.set(idx++, h, w, clsOut.get(c, h, w));
+        }
+      }
+    }
+    for (int c = 0; c < numLandmarks; c++) {
+      for (int h = 0; h < 8; h++) {
+        for (int w = 0; w < 8; w++) {
+          maps.set(idx++, h, w, xOut.get(c, h, w));
+        }
+      }
+    }
+    for (int c = 0; c < numLandmarks; c++) {
+      for (int h = 0; h < 8; h++) {
+        for (int w = 0; w < 8; w++) {
+          maps.set(idx++, h, w, yOut.get(c, h, w));
+        }
+      }
+    }
+    for (int c = 0; c < numLandmarks * numNeighbors; c++) {
+      for (int h = 0; h < 8; h++) {
+        for (int w = 0; w < 8; w++) {
+          maps.set(idx++, h, w, nbXOut.get(c, h, w));
+        }
+      }
+    }
+    for (int c = 0; c < numLandmarks * numNeighbors; c++) {
+      for (int h = 0; h < 8; h++) {
+        for (int w = 0; w < 8; w++) {
+          maps.set(idx++, h, w, nbYOut.get(c, h, w));
+        }
+      }
+    }
+    return maps;
   }
 
   public List<float[]> getLandmarks(JtTensor3 maps, float scoreThreshold, int origW, int origH) {
@@ -44,7 +103,7 @@ public class JtPipNet extends JtNetwork3 {
     }
     JtUtil.checkShape(maps.shape, new int[]{numLandmarks + 2 * numLandmarks + 2 * numNeighbors * numLandmarks, 8, 8});
     int[] bestY = new int[numLandmarks], bestX = new int[numLandmarks];
-    float[] maxScores = new float[numLandmarks];
+    var maxScores = new float[numLandmarks];
     Arrays.fill(maxScores, Float.NEGATIVE_INFINITY);
     for (int i = 0; i < numLandmarks; i++) {
       for (int y = 0; y < 8; y++) {
@@ -64,7 +123,7 @@ public class JtPipNet extends JtNetwork3 {
       initX[i] = bestX[i] * 32f + maps.get(numLandmarks + 2 * i, bestY[i], bestX[i]);
       initY[i] = bestY[i] * 32f + maps.get(numLandmarks + 2 * i + 1, bestY[i], bestX[i]);
     }
-    List<float[]> landmarks = new ArrayList<>();
+    var landmarks = new ArrayList<float[]>();
     int neighBase = numLandmarks + 2 * numLandmarks;
     for (int i = 0; i < numLandmarks; i++) {
       if (maxScores[i] <= scoreThreshold) {

@@ -1,10 +1,12 @@
 package io.vacco.jtinn;
 
+import com.google.gson.Gson;
 import io.vacco.jtinn.core.*;
 import io.vacco.jtinn.pipnet.*;
 import j8spec.annotation.DefinedOrder;
 import j8spec.junit.J8SpecRunner;
 import org.junit.runner.RunWith;
+import java.io.*;
 import java.util.Arrays;
 
 import static j8spec.J8Spec.*;
@@ -70,6 +72,27 @@ public class JtPipNetTest {
       System.out.println(Arrays.toString(lm));
       assertTrue(lm != null && lm.length == 2);
       assertTrue(lm[0] >= 0 && lm[0] <= 512 && lm[1] >= 0 && lm[1] <= 512);
+    });
+
+    it("Can load model from JSON", () -> {
+      var g = new Gson();
+      var jsonFile = new File("./etc/tools/models/pip_32_16_60_r18_l2_l1_10_1_nb10/epoch59-full.json").getAbsoluteFile();
+      try (var r = new FileReader(jsonFile)) {
+        var dto = g.fromJson(r, JtPipNetDto.class);
+        var model = JtPipNetDto.fromDto(dto);
+        var head = (JtLayers.JtConvLayer3) model.layers[model.layers.length - 1];
+        assertArrayEquals(new int[]{1564, 8, 8}, head.a.shape);
+        var pixels = new float[3 * 256 * 256];
+        Arrays.fill(pixels, 127.0f);
+        var landmarks = model.detectLandmarks(pixels, 512, 512);
+        assertEquals(68, landmarks.size());
+        for (float[] lm : landmarks) {
+          if (lm != null) {
+            assertTrue(lm[0] >= 0 && lm[0] <= 512);
+            assertTrue(lm[1] >= 0 && lm[1] <= 512);
+          }
+        }
+      }
     });
   }
 
