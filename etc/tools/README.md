@@ -7,3 +7,7 @@ Use model `pip_32_16_60_r18_l2_l1_10_1_nb10/epoch59.pth` from https://drive.goog
 ```
 mkdir -p ./models/pip_32_16_60_r18_l2_l1_10_1_nb10
 ```
+
+```
+pip install torch torchvision
+```
